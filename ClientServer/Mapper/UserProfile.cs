@@ -1,5 +1,5 @@
-﻿using Entites.ViewModels;
-using Entities.Requests;
+﻿using Entities.Requests;
+using Entities.ViewModels;
 
 namespace AutoMapper
 {
@@ -7,7 +7,8 @@ namespace AutoMapper
     {
         public UserProfile()
         {
-            CreateMap<LoginViewModel,UserLoginRequest>();
+            CreateMap<LoginViewModel, LoginRequest>();
+            CreateMap<RegisterViewModel, RegisterRequest>();
         }
     }
 }

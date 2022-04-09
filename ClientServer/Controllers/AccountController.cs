@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Contracts;
-using Entites.ViewModels;
 using Entities.Requests;
 using Entities.Responses;
+using Entities.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NLog;
@@ -24,26 +24,24 @@ namespace ClientServer.Controllers
             _messenger = messenger;
         }
 
-        [Route("login")]
-        [HttpGet]
+        [HttpGet("login")]
         public IActionResult Login(string returnUrl = null)
         {
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
-        [Route("login")]
-        [HttpPost]
+        [HttpPost("login")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var userLoginRequest = _mapper.Map<UserLoginRequest>(model);
-                string jsonRequest = JsonConvert.SerializeObject(userLoginRequest);
-                var jsoneRespone = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication/login", jsonRequest);
-                var response = JsonConvert.DeserializeObject<UserLoginResponse>(jsoneRespone.Message);
+                var loginRequest = _mapper.Map<LoginRequest>(model);
+                string jsonRequest = JsonConvert.SerializeObject(loginRequest);
+                var jsonRespone = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication/login", jsonRequest);
+                var response = JsonConvert.DeserializeObject<LoginResponse>(jsonRespone.Message);
 
-                if (jsoneRespone.StatusCode == 200)
+                if (jsonRespone.StatusCode == 200)
                 {
                     HttpContext.Response.Cookies.Append("JWT", response.Token);
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
@@ -60,7 +58,43 @@ namespace ClientServer.Controllers
                     ModelState.AddModelError("", $"Wrong Login or Password");
                 }
             }
+            return View(model);
+        }
 
+        [HttpGet("register")]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var registerRequest = _mapper.Map<RegisterRequest>(model);
+                string jsonRequest = JsonConvert.SerializeObject(registerRequest);
+                var jsonRespone = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication", jsonRequest);
+                _logger.LogError(jsonRespone.StatusCode.ToString());
+                switch (jsonRespone.StatusCode)
+                {
+                    case 201:
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+
+                    case 400:
+                        {
+                            ModelState.AddModelError("", $"This user name not available");
+                        } break;
+
+                    default:
+                        {
+                            ModelState.AddModelError("", $"Model is invalid");
+                        }
+                        break;
+                }
+            }
             return View(model);
         }
     }

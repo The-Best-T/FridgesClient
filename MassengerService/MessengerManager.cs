@@ -9,35 +9,35 @@ namespace MessengerService
     public class MessengerManager : IMessenger
     {
         private readonly HttpClient client = new HttpClient();
-        public async Task<JsoneRespone> DeleteRequestAsync(string url)
+        public async Task<JsonRespone> DeleteRequestAsync(string url)
         {
             using HttpResponseMessage response = await client.DeleteAsync(url).ConfigureAwait(false);
 
             var statusCode = (int)response.StatusCode;
             var message = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            return new JsoneRespone
+            return new JsonRespone
             {
                 StatusCode = statusCode,
                 Message = message
             };
         }
 
-        public async Task<JsoneRespone> GetRequestAsync(string url)
+        public async Task<JsonRespone> GetRequestAsync(string url)
         {
             using HttpResponseMessage response = await client.GetAsync(url).ConfigureAwait(false);
 
             var statusCode = (int)response.StatusCode;
             var message = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            return new JsoneRespone
+            return new JsonRespone
             {
                 StatusCode = statusCode,
                 Message = message
             };
         }
 
-        public async Task<JsoneRespone> PostRequestAsync(string url, string json)
+        public async Task<JsonRespone> PostRequestAsync(string url, string json)
         {
             using HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
             using HttpResponseMessage response = await client.PostAsync(url, content).ConfigureAwait(false);
@@ -45,14 +45,14 @@ namespace MessengerService
             var statusCode = (int)response.StatusCode;
             var message = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            return new JsoneRespone
+            return new JsonRespone
             {
                 StatusCode = statusCode,
                 Message = message
             };
         }
 
-        public async Task<JsoneRespone> PutRequestAsync(string url, string json)
+        public async Task<JsonRespone> PutRequestAsync(string url, string json)
         {
             using HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
             using HttpResponseMessage response = await client.PutAsync(url, content).ConfigureAwait(false);
@@ -60,7 +60,7 @@ namespace MessengerService
             var statusCode = (int)response.StatusCode;
             var message = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            return new JsoneRespone
+            return new JsonRespone
             {
                 StatusCode = statusCode,
                 Message = message
