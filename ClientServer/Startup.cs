@@ -32,6 +32,7 @@ namespace ClientServer
             services.AddControllersWithViews();
             services.ConfigureLoggerService();
             services.AddAutoMapper(typeof(Startup));
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -42,9 +43,11 @@ namespace ClientServer
             }
             else
             {
-                app.UseExceptionHandler();                 
                 app.UseHsts();
             }
+
+            app.UseExceptionHandler("/Home/Error");             
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

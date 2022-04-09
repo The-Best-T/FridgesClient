@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
+using Contracts;
 using Entites.ViewModels;
 using Entities.Requests;
 using Entities.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NLog;
-using System;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ClientServer.Controllers
@@ -17,12 +15,13 @@ namespace ClientServer.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ILoggerManager _logger;
-        private static readonly HttpClient client = new HttpClient();
+        private readonly IMessenger _messenger;
 
-        public AccountController(IMapper mapper, ILoggerManager logger)
+        public AccountController(IMapper mapper, ILoggerManager logger, IMessenger messenger)
         {
             _mapper = mapper;
             _logger = logger;
+            _messenger = messenger;
         }
 
         [Route("login")]
@@ -39,52 +38,30 @@ namespace ClientServer.Controllers
         {
             if (ModelState.IsValid)
             {
-                var loginModelDto = _mapper.Map<UserLoginRequest>(model);
-                try
+                var userLoginRequest = _mapper.Map<UserLoginRequest>(model);
+                string jsonRequest = JsonConvert.SerializeObject(userLoginRequest);
+                var jsoneRespone = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication/login", jsonRequest);
+                var response = JsonConvert.DeserializeObject<UserLoginResponse>(jsoneRespone.Message);
+
+                if (jsoneRespone.StatusCode == 200)
                 {
-                    string jsonRequest = JsonConvert.SerializeObject(loginModelDto);
-                    var jsoneRespone = await PostRequestAsync("https://localhost:44381/api/authentication/login", jsonRequest);
-                    var response = JsonConvert.DeserializeObject<UserLoginResponse>(jsoneRespone.Message);
-
-                    if (jsoneRespone.StatusCode == 200)
+                    HttpContext.Response.Cookies.Append("JWT", response.Token);
+                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
-                        HttpContext.Response.Cookies.Append("JWT", response.Token);
-                        if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                        {
-                            return Redirect(model.ReturnUrl);
-                        }
-                        else
-                        {
-                            return RedirectToAction("Index", "Home");
-                        }
-
+                        return Redirect(model.ReturnUrl);
                     }
                     else
                     {
-                        ModelState.AddModelError("", $"Wrong Login or Password");
+                        return RedirectToAction("Index", "Home");
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    _logger.LogError($"AccountController -> Login: {ex.Message}");
+                    ModelState.AddModelError("", $"Wrong Login or Password");
                 }
             }
+
             return View(model);
-
-        }
-        private static async Task<JsoneRespone> PostRequestAsync(string url, string json)
-        {
-            using HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
-            using HttpResponseMessage response = await client.PostAsync(url, content).ConfigureAwait(false);
-
-            var message = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            var statusCode = (int)response.StatusCode;
-
-            return new JsoneRespone
-            {
-                StatusCode = statusCode,
-                Message = message
-            };
         }
     }
 }

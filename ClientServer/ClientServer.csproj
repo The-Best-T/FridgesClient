@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Entities\Entities.csproj" />
     <ProjectReference Include="..\LoggerService\LoggerService.csproj" />
+    <ProjectReference Include="..\MassengerService\MessengerService.csproj" />
   </ItemGroup>
 
 </Project>
