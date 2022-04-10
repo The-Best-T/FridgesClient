@@ -1,14 +1,18 @@
 ﻿@model string
-@{
-    Layout = null;
-}
-<!doctype html>
-<html>
-<head>
-    <title>Home</title>
-    <meta charset="utf-8" />
-</head>
-<body>
-    <h2>@Model</h2>
-</body>
-</html>
+ @{
+    ViewData["Title"] = "Home";
+ }
+<div class="container">
+    <p>
+        <h2>Client application for creating, change and deleting refrigerators and products.</h2>
+    </p>
+
+    <div>
+        <ul class="nav navbar-nav">
+            <li><a href="~/FridgeModels" class="navbar-brand">Fridge models</a></li>
+            <li><a href="~/Fridges" class="navbar-brand">Fridges</a></li>
+            <li><a href="~/Products" class="navbar-brand">Products</a></li>
+            <li><a href="~/Fridges/Fill" class="navbar-brand">Fill fridges</a></li>
+        </ul>
+    </div>
+</div>

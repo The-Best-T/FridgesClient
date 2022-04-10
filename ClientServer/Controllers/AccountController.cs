@@ -40,22 +40,32 @@ namespace ClientServer.Controllers
                 string jsonRequest = JsonConvert.SerializeObject(loginRequest);
                 var jsonRespone = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication/login", jsonRequest);
                 var response = JsonConvert.DeserializeObject<LoginResponse>(jsonRespone.Message);
+                switch (jsonRespone.StatusCode)
+                {
+                    case 200:
+                        {
+                            HttpContext.Response.Cookies.Append("JWT", response.Token);
+                            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                            {
+                                return Redirect(model.ReturnUrl);
+                            }
+                            else
+                            {
+                                return RedirectToAction("Index", "Home");
+                            }
+                        }
 
-                if (jsonRespone.StatusCode == 200)
-                {
-                    HttpContext.Response.Cookies.Append("JWT", response.Token);
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                    {
-                        return Redirect(model.ReturnUrl);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
-                }
-                else
-                {
-                    ModelState.AddModelError("", $"Wrong Login or Password");
+                    case 401:
+                        {
+                            ModelState.AddModelError("", $"Wrong Login or Password");
+                        }
+                        break;
+
+                    default:
+                        {
+                            RedirectToAction("Error", "Home");
+                        }
+                        break;
                 }
             }
             return View(model);
@@ -74,8 +84,8 @@ namespace ClientServer.Controllers
             {
                 var registerRequest = _mapper.Map<RegisterRequest>(model);
                 string jsonRequest = JsonConvert.SerializeObject(registerRequest);
-                var jsonRespone = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication", jsonRequest);
-                _logger.LogError(jsonRespone.StatusCode.ToString());
+                var jsonRespone = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication/authentication", jsonRequest);
+
                 switch (jsonRespone.StatusCode)
                 {
                     case 201:
@@ -85,12 +95,19 @@ namespace ClientServer.Controllers
 
                     case 400:
                         {
-                            ModelState.AddModelError("", $"This user name not available");
-                        } break;
+                            ModelState.AddModelError("", $"This user name or email not available");
+                        }
+                        break;
+
+                    case 422:
+                        {
+                            ModelState.AddModelError("", $"Model is invalid");
+                        }
+                        break;
 
                     default:
                         {
-                            ModelState.AddModelError("", $"Model is invalid");
+                            RedirectToAction("Error", "Home");
                         }
                         break;
                 }
