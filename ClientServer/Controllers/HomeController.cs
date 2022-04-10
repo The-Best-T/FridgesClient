@@ -7,7 +7,13 @@ namespace ClientServer.Controllers
     {
         public IActionResult Index()
         {
-            return View(model:HttpContext.Request.Cookies["JWT"]);
+            return View();
+        }
+
+        [HttpGet("error")]
+        public IActionResult Error()
+        {
+            return View();
         }
     }
 }
