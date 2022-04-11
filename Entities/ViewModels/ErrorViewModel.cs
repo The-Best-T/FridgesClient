@@ -1,6 +1,4 @@
-using System;
-
-namespace ClientServer.Models
+﻿namespace Entities.ViewModels
 {
     public class ErrorViewModel
     {
