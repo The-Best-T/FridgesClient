@@ -1,6 +1,6 @@
 ﻿using Entities.Requests;
 using Entities.ViewModels;
-
+using Entities.Responses;
 namespace AutoMapper
 {
     public class UserProfile : Profile
@@ -9,6 +9,7 @@ namespace AutoMapper
         {
             CreateMap<LoginViewModel, LoginRequest>();
             CreateMap<RegisterViewModel, RegisterRequest>();
+            CreateMap<ProductResponse, ProductViewModel>();
         }
     }
 }

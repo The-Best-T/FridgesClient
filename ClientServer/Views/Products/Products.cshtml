@@ -1,0 +1,20 @@
+﻿@model IEnumerable<ProductViewModel>
+ @{
+    ViewData["Title"] = "Products";
+ }
+<h2>List of products</h2>
+<table class="table">
+    @foreach (var product in Model)
+    {
+        <tr>
+            <td>@product.Name</td>
+            <td>
+                <form asp-action="Delete" asp-route-id="@product.Id" method="post">
+                    <button type="submit" class="btn btn-sm btn-danger">
+                        Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+</table>

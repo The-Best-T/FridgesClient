@@ -28,7 +28,6 @@ namespace ClientServer
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureCors();
             services.AddControllersWithViews();
             services.ConfigureLoggerService();
             services.AddAutoMapper(typeof(Startup));
@@ -46,12 +45,10 @@ namespace ClientServer
                 app.UseHsts();
             }
 
-            app.UseExceptionHandler("/Home/Error");             
+            app.UseExceptionHandler("/home/error");             
             
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
-            app.UseCors("CorsPolicy");
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {

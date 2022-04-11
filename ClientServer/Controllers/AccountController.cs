@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ClientServer.Controllers
 {
-    [Route("account")]
+    [Route("Account")]
     public class AccountController : Controller
     {
         private readonly IMapper _mapper;
@@ -24,13 +24,13 @@ namespace ClientServer.Controllers
             _messenger = messenger;
         }
 
-        [HttpGet("login")]
+        [HttpGet("Login")]
         public IActionResult Login(string returnUrl = null)
         {
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
-        [HttpPost("login")]
+        [HttpPost("Login")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
@@ -38,9 +38,10 @@ namespace ClientServer.Controllers
             {
                 var loginRequest = _mapper.Map<LoginRequest>(model);
                 string jsonRequest = JsonConvert.SerializeObject(loginRequest);
-                var jsonRespone = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication/login", jsonRequest);
-                var response = JsonConvert.DeserializeObject<LoginResponse>(jsonRespone.Message);
-                switch (jsonRespone.StatusCode)
+                var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication/login",null, jsonRequest);
+                var response = JsonConvert.DeserializeObject<LoginResponse>(jsonResponse.Message);
+
+                switch (jsonResponse.StatusCode)
                 {
                     case 200:
                         {
@@ -63,30 +64,29 @@ namespace ClientServer.Controllers
 
                     default:
                         {
-                            RedirectToAction("Error", "Home");
+                            return RedirectToAction("Error", "Home");
                         }
-                        break;
+                        
                 }
             }
             return View(model);
         }
 
-        [HttpGet("register")]
+        [HttpGet("Register")]
         public IActionResult Register()
         {
             return View();
         }
 
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var registerRequest = _mapper.Map<RegisterRequest>(model);
                 string jsonRequest = JsonConvert.SerializeObject(registerRequest);
-                var jsonRespone = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication/authentication", jsonRequest);
-
-                switch (jsonRespone.StatusCode)
+                var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication",null, jsonRequest);
+                switch (jsonResponse.StatusCode)
                 {
                     case 201:
                         {
@@ -107,9 +107,8 @@ namespace ClientServer.Controllers
 
                     default:
                         {
-                            RedirectToAction("Error", "Home");
+                            return RedirectToAction("Error", "Home");
                         }
-                        break;
                 }
             }
             return View(model);

@@ -2,7 +2,7 @@
 
 namespace ClientServer.Controllers
 {
-    [Route("home")]
+    [Route("Home")]
     public class HomeController : Controller
     {
         public IActionResult Index()
@@ -10,7 +10,7 @@ namespace ClientServer.Controllers
             return View();
         }
 
-        [HttpGet("error")]
+        [HttpGet("Error")]
         public IActionResult Error()
         {
             return View();
