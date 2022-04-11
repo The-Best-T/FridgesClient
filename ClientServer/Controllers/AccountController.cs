@@ -39,12 +39,12 @@ namespace ClientServer.Controllers
                 var loginRequest = _mapper.Map<LoginRequest>(model);
                 string jsonRequest = JsonConvert.SerializeObject(loginRequest);
                 var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication/login",null, jsonRequest);
-                var response = JsonConvert.DeserializeObject<LoginResponse>(jsonResponse.Message);
 
                 switch (jsonResponse.StatusCode)
                 {
                     case 200:
                         {
+                            var response = JsonConvert.DeserializeObject<LoginResponse>(jsonResponse.Message);
                             HttpContext.Response.Cookies.Append("JWT", response.Token);
                             if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                             {
@@ -90,7 +90,7 @@ namespace ClientServer.Controllers
                 {
                     case 201:
                         {
-                            return RedirectToAction("Index", "Home");
+                            return RedirectToAction("Login", "Account");
                         }
 
                     case 400:

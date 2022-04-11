@@ -43,9 +43,9 @@ namespace ClientServer
             else
             {
                 app.UseHsts();
+                app.UseExceptionHandler("/Home/Error");             
             }
 
-            app.UseExceptionHandler("/home/error");             
             
             app.UseHttpsRedirection();
             app.UseStaticFiles();
