@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Entities.ViewModels;
+﻿using Entities.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace ClientServer.Controllers

@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using Contracts;
-using Microsoft.AspNetCore.Mvc;
-using NLog;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using Entities.RequestFeatures;
 using Entities.Responses;
 using Entities.ViewModels;
-using Entities.RequestFeatures;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using NLog;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ClientServer.Controllers
 {
@@ -19,19 +18,19 @@ namespace ClientServer.Controllers
         private readonly ILoggerManager _logger;
         private readonly IMessenger _messenger;
 
-        public ProductsController(IMapper mapper,ILoggerManager logger,IMessenger messenger)
+        public ProductsController(IMapper mapper, ILoggerManager logger, IMessenger messenger)
         {
             _mapper = mapper;
             _logger = logger;
             _messenger = messenger;
         }
         [HttpGet]
-        public async Task<IActionResult> Products([FromQuery] int pageNumber=1)
+        public async Task<IActionResult> Products([FromQuery] int pageNumber = 1)
         {
             string token = HttpContext.Request.Cookies["JWT"];
             string query = $"pageNumber={pageNumber}&pageSize={3}";
 
-            var jsonResponse = await _messenger.GetRequestAsync("https://localhost:44381/api/products", token,query);
+            var jsonResponse = await _messenger.GetRequestAsync("https://localhost:44381/api/products", token, query);
             switch (jsonResponse.StatusCode)
             {
                 case 200:
@@ -46,7 +45,7 @@ namespace ClientServer.Controllers
                     }
                 case 401:
                     {
-                        return RedirectToAction("Login","Account");
+                        return RedirectToAction("Login", "Account");
                     }
                 default:
                     {

@@ -38,7 +38,7 @@ namespace ClientServer.Controllers
             {
                 var loginRequest = _mapper.Map<LoginRequest>(model);
                 string jsonRequest = JsonConvert.SerializeObject(loginRequest);
-                var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication/login",null, jsonRequest);
+                var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication/login", null, jsonRequest);
 
                 switch (jsonResponse.StatusCode)
                 {
@@ -66,7 +66,7 @@ namespace ClientServer.Controllers
                         {
                             return RedirectToAction("Error", "Home");
                         }
-                        
+
                 }
             }
             return View(model);
@@ -85,7 +85,7 @@ namespace ClientServer.Controllers
             {
                 var registerRequest = _mapper.Map<RegisterRequest>(model);
                 string jsonRequest = JsonConvert.SerializeObject(registerRequest);
-                var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication",null, jsonRequest);
+                var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication", null, jsonRequest);
                 switch (jsonResponse.StatusCode)
                 {
                     case 201:

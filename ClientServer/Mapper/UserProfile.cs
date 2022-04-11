@@ -1,6 +1,6 @@
 ﻿using Entities.Requests;
-using Entities.ViewModels;
 using Entities.Responses;
+using Entities.ViewModels;
 namespace AutoMapper
 {
     public class UserProfile : Profile
