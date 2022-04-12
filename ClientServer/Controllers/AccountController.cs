@@ -90,7 +90,7 @@ namespace ClientServer.Controllers
                 {
                     case 201:
                         {
-                            return RedirectToAction("Login", "Account");
+                            return RedirectToAction("Login");
                         }
 
                     case int code when(code==400 || code==422):

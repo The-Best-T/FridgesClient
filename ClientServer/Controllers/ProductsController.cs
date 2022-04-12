@@ -78,7 +78,7 @@ namespace ClientServer.Controllers
                         }
                 }
             }
-            return RedirectToAction("Products", "Products");
+            return RedirectToAction("Products");
         }
 
         [HttpGet("Create")]
@@ -117,11 +117,38 @@ namespace ClientServer.Controllers
                         break;
                     default:
                         {
-                            return RedirectToAction("Products", "Products");
+                            return RedirectToAction("Products");
                         }
                 }
             }
             return View(model);
         }
+
+        [HttpGet("{productId}")]
+        public async Task<IActionResult> Product(Guid productId)
+        {
+            if (productId!=Guid.Empty)
+            {
+                string token = HttpContext.Request.Cookies["JWT"];
+
+                var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/products/{productId}", token, null);
+                switch(jsonResponse.StatusCode)
+                {
+                    case 200:
+                        {
+                            var productViewModel = JsonConvert.DeserializeObject<ProductViewModel>(jsonResponse.Message);
+                            return View(productViewModel);
+                        }
+                    default:
+                        {
+                            return RedirectToAction("Products");
+                        }
+                }
+            }
+            return RedirectToAction("Products");
+        }
+
+       
     }
+
 }

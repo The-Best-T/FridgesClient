@@ -1,0 +1,28 @@
+﻿@using Entities.ViewModels.Products
+@model ProductViewModel
+ @{
+    ViewData["Title"] = "Product";
+ }
+ <h1>Product</h1>
+<a asp-action="Products" style="margin-right:100%" 
+     class="btn btn-sm btn-primary">
+     Products  
+</a>
+<div style="color:#007bff">
+    <h3>
+        <span style="color:black">
+            Product name:
+        </span> 
+            @Model.Name
+    </h3>
+    <h3>
+        <span style="color:black">
+            Default quantity:
+        </span> 
+            @Model.DefaultQuantity
+    </h3>
+</div>
+<a asp-action="Update" 
+     class="btn btn-sm btn-primary">
+     Change  
+</a>
