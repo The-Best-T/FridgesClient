@@ -1,4 +1,4 @@
-﻿namespace Entities.Requests
+﻿namespace Entities.Requests.Account
 {
     public class RegisterRequest
     {

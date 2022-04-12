@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Contracts;
 using Entities.RequestFeatures;
-using Entities.Responses;
-using Entities.ViewModels;
+using Entities.Requests.Products;
+using Entities.Responses.Account;
+using Entities.Responses.Products;
+using Entities.ViewModels.Products;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NLog;
@@ -50,7 +52,7 @@ namespace ClientServer.Controllers
                     }
                 default:
                     {
-                        return RedirectToAction("Error", "Home");
+                        return RedirectToAction("Index", "Home");
                     }
             }
         }
@@ -58,7 +60,7 @@ namespace ClientServer.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(Guid productId)
         {
-            if (productId!=Guid.Empty)
+            if (productId != Guid.Empty)
             {
                 string token = HttpContext.Request.Cookies["JWT"];
 
@@ -77,6 +79,49 @@ namespace ClientServer.Controllers
                 }
             }
             return RedirectToAction("Products", "Products");
+        }
+
+        [HttpGet("Create")]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost("Create")]
+        public async Task<IActionResult> Create(CreateProductViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                string token = HttpContext.Request.Cookies["JWT"];
+                var productRequest = _mapper.Map<CreateProductRequest>(model);
+
+                string jsonRequest = JsonConvert.SerializeObject(productRequest);
+                var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/products", token, jsonRequest);
+
+                switch (jsonResponse.StatusCode)
+                {
+                    case 401:
+                        {
+                            return RedirectToAction("Login", "Account");
+                        }
+                    case int code when (code == 400 || code == 422):
+                        {
+                            var productResponse = new CreateProductResponse()
+                            {
+                                Errors = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(jsonResponse.Message)
+                            };
+                            foreach (var error in productResponse.Errors)
+                                foreach (var message in error.Value)
+                                    ModelState.AddModelError(error.Key, message);
+                        }
+                        break;
+                    default:
+                        {
+                            return RedirectToAction("Products", "Products");
+                        }
+                }
+            }
+            return View(model);
         }
     }
 }

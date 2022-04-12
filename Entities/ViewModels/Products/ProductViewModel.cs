@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Entities.ViewModels
+namespace Entities.ViewModels.Products
 {
     public class ProductViewModel
     {

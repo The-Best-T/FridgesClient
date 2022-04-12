@@ -1,7 +1,7 @@
 ﻿using Entities.RequestFeatures;
 using System.Collections.Generic;
 
-namespace Entities.ViewModels
+namespace Entities.ViewModels.Products
 {
     public class ProductsViewModel
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Entities.Responses
+namespace Entities.Responses.Account
 {
     public class ProductResponse
     {

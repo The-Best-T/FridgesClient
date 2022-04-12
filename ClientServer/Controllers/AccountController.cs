@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Contracts;
-using Entities.Requests;
-using Entities.Responses;
-using Entities.ViewModels;
+using Entities.Requests.Account;
+using Entities.Responses.Account;
+using Entities.ViewModels.Account;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NLog;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-
 namespace ClientServer.Controllers
 {
     [Route("Account")]
@@ -93,15 +93,17 @@ namespace ClientServer.Controllers
                             return RedirectToAction("Login", "Account");
                         }
 
-                    case 400:
+                    case int code when(code==400 || code==422):
                         {
-                            ModelState.AddModelError("", $"This user name or email not available");
-                        }
-                        break;
-
-                    case 422:
-                        {
-                            ModelState.AddModelError("", $"Model is invalid");
+                            var registerResponse = new RegisterResponse()
+                            {
+                                Errors = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(jsonResponse.Message)
+                            };
+                            foreach (var error in registerResponse.Errors)
+                                foreach (var message in error.Value)
+                                {
+                                    ModelState.AddModelError("", message);
+                                }
                         }
                         break;
 
