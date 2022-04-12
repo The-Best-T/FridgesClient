@@ -3,21 +3,26 @@
     ViewData["Title"] = "Products";
  }
 <h2>List of products</h2>
+<a asp-action="Create" style="margin-right:100%" 
+     class="btn btn-sm btn-primary">
+     Create  
+</a>
 <table class="table">
     @foreach (var product in Model.products)
     {
         <tr>
             <td>@product.Name</td>
             <td>
-                <form asp-action="Product" asp-route-id="@product.Id" method="post">
-                    <button type="submit" class="btn btn-sm btn-info">
+                <a asp-action="Product" 
+                    asp-route-id="@product.Id"
+                    class="btn btn-sm btn-info">
                         Info  
-                    </button>
-                </form>
+                </a>
             </td>
             <td>
-                <form asp-action="Delete" asp-route-id="@product.Id" method="post">
-                    <button type="submit" class="btn btn-sm btn-danger">
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" name="productId" value="@product.Id"/>
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return del()">
                         Delete
                     </button>
                 </form>
@@ -41,3 +46,15 @@
             Next
     </a>
 }
+<script>
+    function del()
+    {
+        if (confirm('Delete?'))
+        {
+            if (confirm('Are u sure?'))
+            {
+
+            }
+        }
+    }
+</script>

@@ -6,6 +6,7 @@ using Entities.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NLog;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -52,6 +53,30 @@ namespace ClientServer.Controllers
                         return RedirectToAction("Error", "Home");
                     }
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid productId)
+        {
+            if (productId!=Guid.Empty)
+            {
+                string token = HttpContext.Request.Cookies["JWT"];
+
+                var jsonResponse = await _messenger.DeleteRequestAsync($"https://localhost:44381/api/products/{productId}", token);
+
+                switch (jsonResponse.StatusCode)
+                {
+                    case 401:
+                        {
+                            return RedirectToAction("Login", "Account");
+                        }
+                    default:
+                        {
+                            return RedirectToAction("Products", "Products");
+                        }
+                }
+            }
+            return RedirectToAction("Products", "Products");
         }
     }
 }
