@@ -9,7 +9,7 @@ namespace ClientServer.Extentions
     {
         public static void ConfigureLoggerService(this IServiceCollection services)
         {
-            services.AddSingleton<IMessenger, MessengerManager>();
+            services.AddScoped<IMessenger, MessengerManager>();
             services.AddScoped<ILoggerManager, LoggerManager>();
         }
 

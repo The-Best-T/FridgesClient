@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace Entities.Responses.Account
+﻿namespace Entities.Responses.Account
 {
-    public class RegisterResponse
+    public class RegisterResponse : ErrorResponse
     {
-        public Dictionary<string, IEnumerable<string>> Errors { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Contracts;
+using Entities.Models.Account;
 using Entities.Requests.Account;
 using Entities.Responses.Account;
 using Entities.ViewModels.Account;
@@ -36,7 +37,9 @@ namespace ClientServer.Controllers
         {
             if (ModelState.IsValid)
             {
-                var loginRequest = _mapper.Map<LoginRequest>(model);
+                var loginModel = _mapper.Map<Login>(model);
+                var loginRequest=_mapper.Map<LoginRequest>(loginModel);
+
                 string jsonRequest = JsonConvert.SerializeObject(loginRequest);
                 var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication/login", null, jsonRequest);
 
@@ -83,7 +86,9 @@ namespace ClientServer.Controllers
         {
             if (ModelState.IsValid)
             {
-                var registerRequest = _mapper.Map<RegisterRequest>(model);
+                var registerModel = _mapper.Map<Register>(model);
+                var registerRequest = _mapper.Map<RegisterRequest>(registerModel);
+
                 string jsonRequest = JsonConvert.SerializeObject(registerRequest);
                 var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication", null, jsonRequest);
                 switch (jsonResponse.StatusCode)

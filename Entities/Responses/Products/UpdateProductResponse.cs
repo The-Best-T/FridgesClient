@@ -1,7 +1,6 @@
 ﻿namespace Entities.Responses.Products
 {
-    public class CreateProductResponse : ErrorResponse
+    public class UpdateProductResponse : ErrorResponse
     {
-
     }
 }

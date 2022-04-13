@@ -1,8 +1,7 @@
 ﻿namespace Entities.Requests.Products
 {
-    public class CreateProductRequest
+    public class CreateProductRequest:ManipulateProductRequest
     {
-        public string Name { get; set; }
-        public int DefaultQuantity { get; set; }
+        
     }
 }

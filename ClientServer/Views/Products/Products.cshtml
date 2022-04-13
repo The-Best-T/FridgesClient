@@ -15,14 +15,14 @@
             <td>@product.Name</td>
             <td>
                 <a asp-action="Product" 
-                    asp-route-productId="@product.Id"
+                    asp-route-id="@product.Id"
                     class="btn btn-sm btn-info">
                         Info
                 </a>
             </td>
             <td>
                 <form asp-action="Delete" method="post">
-                    <input type="hidden" name="productId" value="@product.Id"/>
+                    <input type="hidden" name="id" value="@product.Id"/>
                     <button type="submit" class="btn btn-sm btn-danger" onclick="return del()">
                         Delete
                     </button>

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Contracts;
+using Entities.Models.Products;
 using Entities.RequestFeatures;
 using Entities.Requests.Products;
 using Entities.Responses.Account;
@@ -39,9 +40,10 @@ namespace ClientServer.Controllers
                 case 200:
                     {
                         var productsResponse = JsonConvert.DeserializeObject<IEnumerable<ProductResponse>>(jsonResponse.Message);
+                        var products = _mapper.Map<IEnumerable<Product>>(productsResponse);
                         var productsViewModel = new ProductsViewModel()
                         {
-                            products = _mapper.Map<IEnumerable<ProductViewModel>>(productsResponse),
+                            products = _mapper.Map<IEnumerable<ProductViewModel>>(products),
                             metaData = JsonConvert.DeserializeObject<MetaData>(jsonResponse.Headres["X-Pagination"])
                         };
                         return View(productsViewModel);
@@ -58,13 +60,13 @@ namespace ClientServer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(Guid productId)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            if (productId != Guid.Empty)
+            if (id != Guid.Empty)
             {
                 string token = HttpContext.Request.Cookies["JWT"];
 
-                var jsonResponse = await _messenger.DeleteRequestAsync($"https://localhost:44381/api/products/{productId}", token);
+                var jsonResponse = await _messenger.DeleteRequestAsync($"https://localhost:44381/api/products/{id}", token);
 
                 switch (jsonResponse.StatusCode)
                 {
@@ -93,7 +95,9 @@ namespace ClientServer.Controllers
             if (ModelState.IsValid)
             {
                 string token = HttpContext.Request.Cookies["JWT"];
-                var productRequest = _mapper.Map<CreateProductRequest>(model);
+
+                var product = _mapper.Map<Product>(model);
+                var productRequest = _mapper.Map<CreateProductRequest>(product);
 
                 string jsonRequest = JsonConvert.SerializeObject(productRequest);
                 var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/products", token, jsonRequest);
@@ -124,20 +128,26 @@ namespace ClientServer.Controllers
             return View(model);
         }
 
-        [HttpGet("{productId}")]
-        public async Task<IActionResult> Product(Guid productId)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Product(Guid id)
         {
-            if (productId!=Guid.Empty)
+            if (id != Guid.Empty)
             {
                 string token = HttpContext.Request.Cookies["JWT"];
 
-                var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/products/{productId}", token, null);
-                switch(jsonResponse.StatusCode)
+                var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/products/{id}", token, null);
+                switch (jsonResponse.StatusCode)
                 {
                     case 200:
                         {
-                            var productViewModel = JsonConvert.DeserializeObject<ProductViewModel>(jsonResponse.Message);
+                            var productResponse = JsonConvert.DeserializeObject<ProductResponse>(jsonResponse.Message);
+                            var product = _mapper.Map<Product>(productResponse);
+                            var productViewModel = _mapper.Map<ProductViewModel>(product);
                             return View(productViewModel);
+                        }
+                    case 401:
+                        {
+                            return RedirectToAction("Login", "Account");
                         }
                     default:
                         {
@@ -148,7 +158,80 @@ namespace ClientServer.Controllers
             return RedirectToAction("Products");
         }
 
-       
+        [HttpGet("Update")]
+        public async Task<IActionResult> Update([FromQuery]Guid id)
+        {
+            if (id != Guid.Empty)
+            {
+                string token = HttpContext.Request.Cookies["JWT"];
+
+                var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/products/{id}", token, null);
+                switch (jsonResponse.StatusCode)
+                {
+                    case 200:
+                        {
+                            var productResponse = JsonConvert.DeserializeObject<ProductResponse>(jsonResponse.Message);
+                            var product = _mapper.Map<Product>(productResponse);
+                            var updateProductViewModel = _mapper.Map<UpdateProductViewModel>(product);
+                            return View(updateProductViewModel);
+                        }
+                    case 401:
+                        {
+                            return RedirectToAction("Login", "Account");
+                        }
+                    default:
+                        {
+                            return RedirectToAction("Products");
+                        }
+                }
+            }
+            return RedirectToAction("Products");
+        }
+
+        [HttpPost("Update")]
+        public async Task<IActionResult> Update(UpdateProductViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var product = _mapper.Map<Product>(model);
+                var productRequest = _mapper.Map<UpdateProductRequest>(product);
+
+                string token = HttpContext.Request.Cookies["JWT"];
+
+                string jsonRequest = JsonConvert.SerializeObject(productRequest);
+                var jsonResponse = await _messenger.PutRequestAsync($"https://localhost:44381/api/products/{product.Id}", token, jsonRequest);
+
+                switch (jsonResponse.StatusCode)
+                {
+                    case 204:
+                        {
+                            return RedirectToAction("Product", new { id = product.Id });
+                        }
+
+                    case int code when (code == 400 || code == 422):
+                        {
+                            var productResponse = new UpdateProductResponse()
+                            {
+                                Errors = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(jsonResponse.Message)
+                            };
+                            foreach (var error in productResponse.Errors)
+                                foreach (var message in error.Value)
+                                    ModelState.AddModelError(error.Key, message);
+                        }
+                        break;
+                    case 401:
+                        {
+                            return RedirectToAction("Login", "Account");
+                        }
+                    default:
+                        {
+                            return RedirectToAction("Products");
+                        }
+
+                }
+            }            
+            return View(model);
+        }
     }
 
 }

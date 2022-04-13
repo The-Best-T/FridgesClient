@@ -8,16 +8,16 @@
      class="btn btn-sm btn-primary">
      Products  
 </a>
-<form method="post" asp-controller="Product" asp-action="Create">
+<form method="post" asp-controller="Products" asp-action="Create">
     <div asp-validation-summary="ModelOnly" id="myCustomSummary" class="text-danger" style="margin:auto"></div>
     <div class="form-group">
         <label asp-for="Name">Product name</label><br />
-        <input asp-for="Name" style='width:300px;margin:auto' class="form-control" id="FirstName"/>
+        <input asp-for="Name" style='width:300px;margin:auto' class="form-control"/>
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="DefaultQuantity">Default quantity</label><br />
-        <input asp-for="DefaultQuantity" style='width:300px;margin:auto' class="form-control" id="LastName"/>
+        <input asp-for="DefaultQuantity" style='width:300px;margin:auto' class="form-control"/>
         <span asp-validation-for="DefaultQuantity" class="text-danger"></span>
     </div>
     <div>
