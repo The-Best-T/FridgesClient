@@ -35,6 +35,7 @@ namespace MessengerService
             var urlBuilder = new UriBuilder(url);
             urlBuilder.Query = query;
             url = urlBuilder.ToString();
+
             var requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             using HttpResponseMessage response = await client.SendAsync(requestMessage);

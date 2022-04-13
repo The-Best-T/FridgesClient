@@ -6,7 +6,9 @@
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+
     <script src='@Url.Content("~/Scripts/bootstrap.min.js")'></script>
+    
 </head>
 <body>
     <!--меню-->
@@ -20,7 +22,7 @@
             </div>
         </nav>
         <!--основной контент-->
-        <div class="container body-content" >
+        <div class="container body-content" style="text-align:center">
             @RenderBody()
             <hr />
             <footer >

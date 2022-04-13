@@ -1,6 +1,6 @@
-﻿namespace Entities.Requests
+﻿namespace Entities.Models.Account
 {
-    public class RegisterRequest
+    public class Register
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
