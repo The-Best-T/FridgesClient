@@ -1,10 +1,13 @@
-﻿using Entities.Requests.Account;
+﻿using Entities.Models;
+using Entities.Requests.Account;
 using Entities.Requests.Products;
 using Entities.Responses.Account;
 using Entities.ViewModels.Account;
 using Entities.ViewModels.Products;
-using Entities.Models.Account;
-using Entities.Models.Products;
+using Entities.ViewModels.FridgeModels;
+using Entities.Requests.FridgeModels;
+using Entities.Responses.FridgeModels;
+
 namespace AutoMapper
 {
     public class MyProfile : Profile
@@ -21,8 +24,16 @@ namespace AutoMapper
             CreateMap<Product, ProductViewModel>();
             CreateMap<ProductResponse, Product>();
             CreateMap<Product, UpdateProductViewModel>();
-            CreateMap<UpdateProductViewModel,Product>();
+            CreateMap<UpdateProductViewModel, Product>();
             CreateMap<Product, UpdateProductRequest>();
+
+            CreateMap<CreateFridgeModelViewModel, FridgeModel>();
+            CreateMap<FridgeModel, CreateFridgeModelRequest>();
+            CreateMap<FridgeModel, FridgeModelViewModel>();
+            CreateMap<FridgeModelResponse, FridgeModel>();
+            CreateMap<FridgeModel, UpdateFridgeModelViewModel>();
+            CreateMap<UpdateFridgeModelViewModel, FridgeModel>();
+            CreateMap<FridgeModel, UpdateFridgeModelRequest>();
 
         }
     }

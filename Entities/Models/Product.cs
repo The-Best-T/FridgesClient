@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Entities.Models.Products
+namespace Entities.Models
 {
     public class Product
     {

@@ -1,4 +1,4 @@
-﻿namespace Entities.Models.Account
+﻿namespace Entities.Models
 {
     public class Login
     {

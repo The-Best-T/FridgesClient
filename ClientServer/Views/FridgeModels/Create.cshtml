@@ -1,0 +1,26 @@
+﻿@using Entities.ViewModels.FridgeModels
+@model CreateFridgeModelViewModel
+ @{
+    ViewData["Title"] = "Create fridge model";
+ }
+ <h1>New model</h1>
+<a asp-action="Models" style="margin-right:100%" 
+     class="btn btn-sm btn-primary">
+     Models  
+</a>
+<form method="post" asp-controller="FridgeModels" asp-action="Create">
+    <div asp-validation-summary="ModelOnly" id="myCustomSummary" class="text-danger" style="margin:auto"></div>
+    <div class="form-group">
+        <label asp-for="Name">Model name</label><br />
+        <input asp-for="Name" style='width:300px;margin:auto' class="form-control"/>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Year">Year</label><br />
+        <input asp-for="Year" style='width:300px;margin:auto' class="form-control"/>
+        <span asp-validation-for="Year" class="text-danger"></span>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-success">Create</button>
+    </div>
+</form>

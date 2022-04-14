@@ -1,6 +1,6 @@
 ﻿namespace Entities.Requests.Products
 {
-    public class UpdateProductRequest :ManipulateProductRequest
+    public class UpdateProductRequest : ManipulateProductRequest
     {
     }
 }

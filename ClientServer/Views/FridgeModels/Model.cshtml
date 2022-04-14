@@ -1,0 +1,28 @@
+﻿@using Entities.ViewModels.FridgeModels
+@model FridgeModelViewModel
+ @{
+    ViewData["Title"] = "Fridge model";
+ }
+ <h1>Model</h1>
+<a asp-action="Models" style="margin-right:100%" 
+     class="btn btn-sm btn-primary">
+     Models  
+</a>
+<div style="color:#007bff">
+    <h3>
+        <span style="color:black">
+            Model name:
+        </span> 
+            @Model.Name
+    </h3>
+    <h3>
+        <span style="color:black">
+            Year:
+        </span> 
+            @Model.Year
+    </h3>
+</div>
+<a asp-action="Update" asp-route-id="@Model.Id" 
+     class="btn btn-sm btn-primary">
+     Change  
+</a>
