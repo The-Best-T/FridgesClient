@@ -7,6 +7,7 @@ using Entities.ViewModels.Fridges;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NLog;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -54,6 +55,30 @@ namespace ClientServer.Controllers
                         return RedirectToAction("Index", "Home");
                     }
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            if (id != Guid.Empty)
+            {
+                string token = HttpContext.Request.Cookies["JWT"];
+
+                var jsonResponse = await _messenger.DeleteRequestAsync($"https://localhost:44381/api/fridges/{id}", token);
+
+                switch (jsonResponse.StatusCode)
+                {
+                    case 401:
+                        {
+                            return RedirectToAction("Login", "Account");
+                        }
+                    default:
+                        {
+                            return RedirectToAction("Fridges");
+                        }
+                }
+            }
+            return RedirectToAction("Fridges");
         }
     }
 }
