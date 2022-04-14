@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Contracts;
-using Entities.Models.Account;
+using Entities.Models;
 using Entities.Requests.Account;
 using Entities.Responses.Account;
 using Entities.ViewModels.Account;
@@ -38,7 +38,7 @@ namespace ClientServer.Controllers
             if (ModelState.IsValid)
             {
                 var loginModel = _mapper.Map<Login>(model);
-                var loginRequest=_mapper.Map<LoginRequest>(loginModel);
+                var loginRequest = _mapper.Map<LoginRequest>(loginModel);
 
                 string jsonRequest = JsonConvert.SerializeObject(loginRequest);
                 var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/authentication/login", null, jsonRequest);
@@ -98,7 +98,7 @@ namespace ClientServer.Controllers
                             return RedirectToAction("Login");
                         }
 
-                    case int code when(code==400 || code==422):
+                    case int code when (code == 400 || code == 422):
                         {
                             var registerResponse = new RegisterResponse()
                             {

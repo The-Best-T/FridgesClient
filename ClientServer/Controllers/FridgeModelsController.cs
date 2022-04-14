@@ -2,10 +2,9 @@
 using Contracts;
 using Entities.Models;
 using Entities.RequestFeatures;
-using Entities.Requests.Products;
-using Entities.Responses.Account;
-using Entities.Responses.Products;
-using Entities.ViewModels.Products;
+using Entities.Requests.FridgeModels;
+using Entities.Responses.FridgeModels;
+using Entities.ViewModels.FridgeModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NLog;
@@ -15,14 +14,14 @@ using System.Threading.Tasks;
 
 namespace ClientServer.Controllers
 {
-    [Route("Products")]
-    public class ProductsController : Controller
+    [Route("Models")]
+    public class FridgeModelsController : Controller
     {
         private readonly IMapper _mapper;
         private readonly ILoggerManager _logger;
         private readonly IMessenger _messenger;
 
-        public ProductsController(IMapper mapper, ILoggerManager logger, IMessenger messenger)
+        public FridgeModelsController(IMapper mapper, ILoggerManager logger, IMessenger messenger)
         {
             _mapper = mapper;
             _logger = logger;
@@ -30,24 +29,24 @@ namespace ClientServer.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Products([FromQuery] int pageNumber = 1)
+        public async Task<IActionResult> Models([FromQuery] int pageNumber = 1)
         {
             string token = HttpContext.Request.Cookies["JWT"];
             string query = $"pageNumber={pageNumber}&pageSize={3}";
 
-            var jsonResponse = await _messenger.GetRequestAsync("https://localhost:44381/api/products", token, query);
+            var jsonResponse = await _messenger.GetRequestAsync("https://localhost:44381/api/models", token, query);
             switch (jsonResponse.StatusCode)
             {
                 case 200:
                     {
-                        var productsResponse = JsonConvert.DeserializeObject<IEnumerable<ProductResponse>>(jsonResponse.Message);
-                        var products = _mapper.Map<IEnumerable<Product>>(productsResponse);
-                        var productsViewModel = new ProductsViewModel()
+                        var fridgeModelsResponse = JsonConvert.DeserializeObject<IEnumerable<FridgeModelResponse>>(jsonResponse.Message);
+                        var fridgeModels = _mapper.Map<IEnumerable<FridgeModel>>(fridgeModelsResponse);
+                        var fridgeModelsViewModel = new FridgeModelsViewModel()
                         {
-                            products = _mapper.Map<IEnumerable<ProductViewModel>>(products),
+                            fridgeModels = _mapper.Map<IEnumerable<FridgeModelViewModel>>(fridgeModels),
                             metaData = JsonConvert.DeserializeObject<MetaData>(jsonResponse.Headres["X-Pagination"])
                         };
-                        return View(productsViewModel);
+                        return View(fridgeModelsViewModel);
                     }
                 case 401:
                     {
@@ -67,7 +66,7 @@ namespace ClientServer.Controllers
             {
                 string token = HttpContext.Request.Cookies["JWT"];
 
-                var jsonResponse = await _messenger.DeleteRequestAsync($"https://localhost:44381/api/products/{id}", token);
+                var jsonResponse = await _messenger.DeleteRequestAsync($"https://localhost:44381/api/models/{id}", token);
 
                 switch (jsonResponse.StatusCode)
                 {
@@ -77,11 +76,11 @@ namespace ClientServer.Controllers
                         }
                     default:
                         {
-                            return RedirectToAction("Products");
+                            return RedirectToAction("Models");
                         }
                 }
             }
-            return RedirectToAction("Products");
+            return RedirectToAction("Models");
         }
 
         [HttpGet("Create")]
@@ -91,17 +90,17 @@ namespace ClientServer.Controllers
         }
 
         [HttpPost("Create")]
-        public async Task<IActionResult> Create(CreateProductViewModel model)
+        public async Task<IActionResult> Create(CreateFridgeModelViewModel model)
         {
             if (ModelState.IsValid)
             {
                 string token = HttpContext.Request.Cookies["JWT"];
 
-                var product = _mapper.Map<Product>(model);
-                var productRequest = _mapper.Map<CreateProductRequest>(product);
+                var fridgeModel = _mapper.Map<FridgeModel>(model);
+                var fridgeModelRequest = _mapper.Map<CreateFridgeModelRequest>(fridgeModel);
 
-                string jsonRequest = JsonConvert.SerializeObject(productRequest);
-                var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/products", token, jsonRequest);
+                string jsonRequest = JsonConvert.SerializeObject(fridgeModelRequest);
+                var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/models", token, jsonRequest);
 
                 switch (jsonResponse.StatusCode)
                 {
@@ -111,18 +110,18 @@ namespace ClientServer.Controllers
                         }
                     case int code when (code == 400 || code == 422):
                         {
-                            var productResponse = new CreateProductResponse()
+                            var fridgeModelResponse = new CreateFridgeModelResponse()
                             {
                                 Errors = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(jsonResponse.Message)
                             };
-                            foreach (var error in productResponse.Errors)
+                            foreach (var error in fridgeModelResponse.Errors)
                                 foreach (var message in error.Value)
                                     ModelState.AddModelError(error.Key, message);
                         }
                         break;
                     default:
                         {
-                            return RedirectToAction("Products");
+                            return RedirectToAction("Models");
                         }
                 }
             }
@@ -130,21 +129,21 @@ namespace ClientServer.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Product(Guid id)
+        public async Task<IActionResult> Model(Guid id)
         {
             if (id != Guid.Empty)
             {
                 string token = HttpContext.Request.Cookies["JWT"];
 
-                var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/products/{id}", token, null);
+                var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/models/{id}", token, null);
                 switch (jsonResponse.StatusCode)
                 {
                     case 200:
                         {
-                            var productResponse = JsonConvert.DeserializeObject<ProductResponse>(jsonResponse.Message);
-                            var product = _mapper.Map<Product>(productResponse);
-                            var productViewModel = _mapper.Map<ProductViewModel>(product);
-                            return View(productViewModel);
+                            var fridgeModelResponse = JsonConvert.DeserializeObject<FridgeModelResponse>(jsonResponse.Message);
+                            var fridgeModel = _mapper.Map<FridgeModel>(fridgeModelResponse);
+                            var fridgeModelViewModel = _mapper.Map<FridgeModelViewModel>(fridgeModel);
+                            return View(fridgeModelViewModel);
                         }
                     case 401:
                         {
@@ -152,11 +151,11 @@ namespace ClientServer.Controllers
                         }
                     default:
                         {
-                            return RedirectToAction("Products");
+                            return RedirectToAction("Models");
                         }
                 }
             }
-            return RedirectToAction("Products");
+            return RedirectToAction("Models");
         }
 
         [HttpGet("Update")]
@@ -166,15 +165,15 @@ namespace ClientServer.Controllers
             {
                 string token = HttpContext.Request.Cookies["JWT"];
 
-                var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/products/{id}", token, null);
+                var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/models/{id}", token, null);
                 switch (jsonResponse.StatusCode)
                 {
                     case 200:
                         {
-                            var productResponse = JsonConvert.DeserializeObject<ProductResponse>(jsonResponse.Message);
-                            var product = _mapper.Map<Product>(productResponse);
-                            var updateProductViewModel = _mapper.Map<UpdateProductViewModel>(product);
-                            return View(updateProductViewModel);
+                            var fridgeModelResponse = JsonConvert.DeserializeObject<FridgeModel>(jsonResponse.Message);
+                            var fridgeModel = _mapper.Map<FridgeModel>(fridgeModelResponse);
+                            var updateFridgeModelViewModel = _mapper.Map<UpdateFridgeModelViewModel>(fridgeModel);
+                            return View(updateFridgeModelViewModel);
                         }
                     case 401:
                         {
@@ -182,40 +181,40 @@ namespace ClientServer.Controllers
                         }
                     default:
                         {
-                            return RedirectToAction("Products");
+                            return RedirectToAction("Models");
                         }
                 }
             }
-            return RedirectToAction("Products");
+            return RedirectToAction("Models");
         }
 
         [HttpPost("Update")]
-        public async Task<IActionResult> Update(UpdateProductViewModel model)
+        public async Task<IActionResult> Update(UpdateFridgeModelViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var product = _mapper.Map<Product>(model);
-                var productRequest = _mapper.Map<UpdateProductRequest>(product);
+                var fridgeModel = _mapper.Map<FridgeModel>(model);
+                var fridgeModelRequest = _mapper.Map<UpdateFridgeModelRequest>(fridgeModel);
 
                 string token = HttpContext.Request.Cookies["JWT"];
 
-                string jsonRequest = JsonConvert.SerializeObject(productRequest);
-                var jsonResponse = await _messenger.PutRequestAsync($"https://localhost:44381/api/products/{product.Id}", token, jsonRequest);
+                string jsonRequest = JsonConvert.SerializeObject(fridgeModelRequest);
+                var jsonResponse = await _messenger.PutRequestAsync($"https://localhost:44381/api/models/{fridgeModel.Id}", token, jsonRequest);
 
                 switch (jsonResponse.StatusCode)
                 {
                     case 204:
                         {
-                            return RedirectToAction("Product", new { id = product.Id });
+                            return RedirectToAction("Model", new { id = fridgeModel.Id });
                         }
 
                     case int code when (code == 400 || code == 422):
                         {
-                            var productResponse = new UpdateProductResponse()
+                            var fridgeModelResponse = new UpdateFridgeModelResponse()
                             {
                                 Errors = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(jsonResponse.Message)
                             };
-                            foreach (var error in productResponse.Errors)
+                            foreach (var error in fridgeModelResponse.Errors)
                                 foreach (var message in error.Value)
                                     ModelState.AddModelError(error.Key, message);
                         }
@@ -226,7 +225,7 @@ namespace ClientServer.Controllers
                         }
                     default:
                         {
-                            return RedirectToAction("Products");
+                            return RedirectToAction("Models");
                         }
 
                 }
@@ -234,5 +233,4 @@ namespace ClientServer.Controllers
             return View(model);
         }
     }
-
 }

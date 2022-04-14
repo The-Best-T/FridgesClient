@@ -1,0 +1,61 @@
+﻿@using Entities.ViewModels.FridgeModels
+@model FridgeModelsViewModel
+ @{
+    ViewData["Title"] = "Fridge models";
+ }
+<h1>List of fridge models</h1>
+<a asp-action="Create" style="margin-right:100%" 
+     class="btn btn-sm btn-primary">
+     Create  
+</a>
+<table class="table">
+    @foreach (var fridgeModel in Model.fridgeModels)
+    {
+        <tr>
+            <td>@fridgeModel.Name</td>
+            <td>
+                <a asp-action="Model" 
+                    asp-route-id="@fridgeModel.Id"
+                    class="btn btn-sm btn-info">
+                        Info
+                </a>
+            </td>
+            <td>
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" name="id" value="@fridgeModel.Id"/>
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return del()">
+                        Delete
+                    </button>
+                </form>
+            </td>        
+        </tr>
+    }
+</table>
+@if(Model.metaData.HasPrevious)
+{
+    <a asp-action="Models"
+        asp-route-pageNumber="@(Model.metaData.CurrentPage-1)"
+        class="btn btn-sm btn-primary">
+            Back
+    </a>
+}
+@if(Model.metaData.HasNext)
+{
+    <a asp-action="Models"
+        asp-route-pageNumber="@(Model.metaData.CurrentPage+1)"
+        class="btn btn-sm btn-primary">
+            Next
+    </a>
+}
+<script>
+    function del()
+    {
+        if (confirm('Delete?'))
+        {
+            if (confirm('Are u sure?'))
+            {
+
+            }
+        }
+    }
+</script>

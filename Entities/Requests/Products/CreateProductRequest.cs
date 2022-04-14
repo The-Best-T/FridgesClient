@@ -1,7 +1,7 @@
 ﻿namespace Entities.Requests.Products
 {
-    public class CreateProductRequest:ManipulateProductRequest
+    public class CreateProductRequest : ManipulateProductRequest
     {
-        
+
     }
 }
