@@ -33,7 +33,7 @@ namespace ClientServer.Controllers
         public async Task<IActionResult> Fridges([FromQuery] int pageNumber = 1)
         {
             string token = HttpContext.Request.Cookies["JWT"];
-            string query = $"pageNumber={pageNumber}&pageSize={3}";
+            string query = $"pageNumber={pageNumber}&pageSize={5}";
 
             var jsonResponse = await _messenger.GetRequestAsync("https://localhost:44381/api/fridges", token, query);
             switch (jsonResponse.StatusCode)
@@ -88,7 +88,7 @@ namespace ClientServer.Controllers
         public async Task<IActionResult> Create([FromQuery] int pageNumber = 1)
         {
             string token = HttpContext.Request.Cookies["JWT"];
-            string query = $"pageNumber={pageNumber}&pageSize={3}";
+            string query = $"pageNumber={pageNumber}&pageSize={5}";
 
             var jsonResponse = await _messenger.GetRequestAsync("https://localhost:44381/api/models", token, query);
             switch (jsonResponse.StatusCode)
@@ -119,43 +119,67 @@ namespace ClientServer.Controllers
             }
         }
 
-        //[HttpPost("Create")]
-        //public async Task<IActionResult> Create(CreateFridgeViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        string token = HttpContext.Request.Cookies["JWT"];
+        [HttpPost("Create")]
+        public async Task<IActionResult> Create(CreateFridgeViewModel model)
+        {
+            _logger.LogInfo($"{model.ModelId}");
+            if (ModelState.IsValid)
+            {
+                string token = HttpContext.Request.Cookies["JWT"];
 
-        //        var fridge = _mapper.Map<Fridge>(model);
-        //        var fridgeRequest = _mapper.Map<CreateFridgeRequest>(fridge);
+                var fridge = _mapper.Map<Fridge>(model);
+                var createFridgeRequest = _mapper.Map<CreateFridgeRequest>(fridge);
 
-        //        string jsonRequest = JsonConvert.SerializeObject(fridgeRequest);
-        //        var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/fridges", token, jsonRequest);
+                string jsonRequest = JsonConvert.SerializeObject(createFridgeRequest);
+                var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/fridges", token, jsonRequest);
+                _logger.LogInfo(jsonResponse.StatusCode.ToString());
+                switch (jsonResponse.StatusCode)
+                {
+                    case 401:
+                        {
+                            return RedirectToAction("Login", "Account");
+                        }
+                    case 404:
+                        {
+                            ModelState.AddModelError("","This model not found");
+                        }break;
+                    default:
+                        {
+                            return RedirectToAction("Fridges");
+                        }
+                }
+            }
+            return RedirectToAction("Create");
+        }
 
-        //        switch (jsonResponse.StatusCode)
-        //        {
-        //            case 401:
-        //                {
-        //                    return RedirectToAction("Login", "Account");
-        //                }
-        //            case int code when (code == 400 || code == 422):
-        //                {
-        //                    var fridgeResponse = new CreateFridgeResponse()
-        //                    {
-        //                        Errors = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(jsonResponse.Message)
-        //                    };
-        //                    foreach (var error in fridgeResponse.Errors)
-        //                        foreach (var message in error.Value)
-        //                            ModelState.AddModelError(error.Key, message);
-        //                }
-        //                break;
-        //            default:
-        //                {
-        //                    return RedirectToAction("Fridges");
-        //                }
-        //        }
-        //    }
-        //    return View(model);
-        //}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Fridge(Guid id)
+        {
+            if (id != Guid.Empty)
+            {
+                string token = HttpContext.Request.Cookies["JWT"];
+
+                var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/fridges/{id}", token, null);
+                switch (jsonResponse.StatusCode)
+                {
+                    case 200:
+                        {
+                            var fridgeResponse = JsonConvert.DeserializeObject<FridgeResponse>(jsonResponse.Message);
+                            var fridge = _mapper.Map<Fridge>(fridgeResponse);
+                            var fridgeViewModel = _mapper.Map<FridgeViewModel>(fridge);
+                            return View(fridgeViewModel);
+                        }
+                    case 401:
+                        {
+                            return RedirectToAction("Login", "Account");
+                        }
+                    default:
+                        {
+                            return RedirectToAction("Fridges");
+                        }
+                }
+            }
+            return RedirectToAction("Fridges");
+        }
     }
 }

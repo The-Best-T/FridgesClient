@@ -3,33 +3,37 @@
  @{
     ViewData["Title"] = "Create fridge";
  }
+
  <h1>New fridge</h1>
 <a asp-action="Fridges" style="margin-right:100%" 
      class="btn btn-sm btn-primary">
      Fridges  
 </a>
-@foreach (var fridgeModel in Model.Models.fridgeModels)
+@if (Model.Models != null)
 {
-    <label>
-        <input type="radio" name="model" value="@fridgeModel.Id" onchange='setId()'>
-        @fridgeModel.Name
-    </label><br />
-}
-@if(Model.Models.metaData.HasPrevious)
-{
-    <a asp-action="Create"
+    foreach (var fridgeModel in Model.Models?.fridgeModels)
+    {
+        <label>
+            <input type="radio" name="model" onchange="handleSet(this)" value="@fridgeModel.Id" >
+            @fridgeModel.Name   
+        </label><br />
+    }
+    @if (Model.Models.metaData.HasPrevious)
+    {
+        <a asp-action="Create"
         asp-route-pageNumber="@(Model.Models.metaData.CurrentPage-1)"
         class="btn btn-sm btn-primary">
             Back
-    </a>
-}
-@if(Model.Models.metaData.HasNext)
-{
-    <a asp-action="Create"
+        </a>
+    }
+    @if (Model.Models.metaData.HasNext)
+    {
+        <a asp-action="Create"
         asp-route-pageNumber="@(Model.Models.metaData.CurrentPage+1)"
         class="btn btn-sm btn-primary">
             Next
-    </a>
+        </a>
+    }
 }
 <form method="post" asp-controller="Fridges" asp-action="Create">
     <div asp-validation-summary="ModelOnly" id="myCustomSummary" class="text-danger" style="margin:auto"></div>
@@ -51,9 +55,8 @@
     </div>
 </form>
 <script>
-    function setId()
+    function handleSet(radio)
     {
-        var modelId=document.getElementById('modelId');
-        modelId.value=(this.value)
+        document.getElementById("modelId").value=radio.value;
     }
 </script>

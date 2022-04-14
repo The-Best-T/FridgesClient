@@ -32,7 +32,7 @@ namespace ClientServer.Controllers
         public async Task<IActionResult> Models([FromQuery] int pageNumber = 1)
         {
             string token = HttpContext.Request.Cookies["JWT"];
-            string query = $"pageNumber={pageNumber}&pageSize={3}";
+            string query = $"pageNumber={pageNumber}&pageSize={5}";
 
             var jsonResponse = await _messenger.GetRequestAsync("https://localhost:44381/api/models", token, query);
             switch (jsonResponse.StatusCode)
@@ -116,7 +116,7 @@ namespace ClientServer.Controllers
                             };
                             foreach (var error in fridgeModelResponse.Errors)
                                 foreach (var message in error.Value)
-                                    ModelState.AddModelError(error.Key, message);
+                                    ModelState.AddModelError("", message);
                         }
                         break;
                     default:
