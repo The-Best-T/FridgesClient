@@ -116,33 +116,47 @@ namespace ClientServer.Controllers
         }
 
         [HttpGet("Create/Models/{modelId}")]
-
-
-        [HttpPost("Create")]
-        public async Task<IActionResult> Create(CreateFridgeViewModel model)
+        public IActionResult Create(Guid modelId)
         {
-            _logger.LogInfo($"{model.ModelId}");
+            if (modelId == Guid.Empty) return RedirectToAction("Models");
+            return View();
+        }
+
+        [HttpPost("Create/Models/{modelId}")]
+        public async Task<IActionResult> Create(Guid modelId, CreateFridgeViewModel model)
+        {
             if (ModelState.IsValid)
             {
                 string token = HttpContext.Request.Cookies["JWT"];
 
+                model.ModelId = modelId;
                 var fridge = _mapper.Map<Fridge>(model);
                 var createFridgeRequest = _mapper.Map<CreateFridgeRequest>(fridge);
 
                 string jsonRequest = JsonConvert.SerializeObject(createFridgeRequest);
                 var jsonResponse = await _messenger.PostRequestAsync("https://localhost:44381/api/fridges", token, jsonRequest);
-                _logger.LogInfo(jsonResponse.StatusCode.ToString());
+
                 switch (jsonResponse.StatusCode)
                 {
                     case 401:
                         {
                             return RedirectToAction("Login", "Account");
                         }
-                    case 404:
+                    case int code when (code == 400 || code == 422):
                         {
-                            ModelState.AddModelError("", "This model not found");
+                            var fridgeResponse = new CreateFridgeResponse()
+                            {
+                                Errors = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(jsonResponse.Message)
+                            };
+                            foreach (var error in fridgeResponse.Errors)
+                                foreach (var message in error.Value)
+                                    ModelState.AddModelError(error.Key, message);
                         }
                         break;
+                    case 404:
+                        {
+                            return RedirectToAction("Models");
+                        }
                     default:
                         {
                             return RedirectToAction("Fridges");
@@ -180,6 +194,101 @@ namespace ClientServer.Controllers
                 }
             }
             return RedirectToAction("Fridges");
+        }
+
+        [HttpGet("Update")]
+        public async Task<IActionResult> Update([FromQuery] Guid id)
+        {
+            if (id != Guid.Empty)
+            {
+                string token = HttpContext.Request.Cookies["JWT"];
+
+                var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/fridges/{id}", token, null);
+                switch (jsonResponse.StatusCode)
+                {
+                    case 200:
+                        {
+                            var fridgeResponse = JsonConvert.DeserializeObject<FridgeResponse>(jsonResponse.Message);
+                            var fridge = _mapper.Map<Fridge>(fridgeResponse);
+                            var updateFridgeViewModel = _mapper.Map<UpdateFridgeViewModel>(fridge);
+                            return View(updateFridgeViewModel);
+                        }
+                    case 401:
+                        {
+                            return RedirectToAction("Login", "Account");
+                        }
+                    default:
+                        {
+                            return RedirectToAction("Fridges");
+                        }
+                }
+            }
+            return RedirectToAction("Fridges");
+        }
+
+        [HttpPost("Update")]
+        public async Task<IActionResult> Update(UpdateFridgeViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var fridge = _mapper.Map<Fridge>(model);
+                var fridgeRequest = _mapper.Map<UpdateFridgeRequest>(fridge);
+
+                string token = HttpContext.Request.Cookies["JWT"];
+
+                string jsonRequest = JsonConvert.SerializeObject(fridgeRequest);
+                var jsonResponse = await _messenger.PutRequestAsync($"https://localhost:44381/api/fridges/{fridge.Id}", token, jsonRequest);
+
+                switch (jsonResponse.StatusCode)
+                {
+                    case 204:
+                        {
+                            return RedirectToAction("Fridge", new { id = fridge.Id });
+                        }
+
+                    case int code when (code == 400 || code == 422):
+                        {
+                            var fridgeResponse = new UpdateFridgeResponse()
+                            {
+                                Errors = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(jsonResponse.Message)
+                            };
+                            foreach (var error in fridgeResponse.Errors)
+                                foreach (var message in error.Value)
+                                    ModelState.AddModelError("", message);
+                        }
+                        break;
+                    case 401:
+                        {
+                            return RedirectToAction("Login", "Account");
+                        }
+                    default:
+                        {
+                            return RedirectToAction("Fridges");
+                        }
+
+                }
+            }
+            return View(model);
+        }
+
+        [HttpPost("Fill")]
+        public async Task<IActionResult> FillFridges()
+        {
+            string token = HttpContext.Request.Cookies["JWT"];
+            var jsonResponse = await _messenger.PostRequestAsync($"https://localhost:44381/api/fridges/fill", token);
+
+            switch (jsonResponse.StatusCode)
+            {
+                case 401:
+                    {
+                        return RedirectToAction("Login", "Account");
+                    }
+                default:
+                    {
+                        return RedirectToAction("Index","Home");
+                    }
+
+            }
         }
     }
 }

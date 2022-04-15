@@ -5,7 +5,7 @@
  }
 <h1>Choose model for new fridge</h1>
 <a asp-action="Fridges" style="margin-right:100%" 
-     class="btn btn-sm btn-primary">
+     class="btn btn-primary">
      Fridges  
 </a>
 <table class="table">
@@ -22,19 +22,21 @@
         </tr>
     }
 </table>
-@if(Model.metaData.HasPrevious)
-{
-    <a asp-action="Models"
-        asp-route-pageNumber="@(Model.metaData.CurrentPage-1)"
-        class="btn btn-sm btn-primary">
-            Back
-    </a>
-}
-@if(Model.metaData.HasNext)
-{
-    <a asp-action="Models"
-        asp-route-pageNumber="@(Model.metaData.CurrentPage+1)"
-        class="btn btn-sm btn-primary">
-            Next
-    </a>
-}
+<div style="margin-top:15px">
+    @if(Model.metaData.HasPrevious)
+    {
+        <a asp-action="Models"
+            asp-route-pageNumber="@(Model.metaData.CurrentPage-1)"
+            class="btn btn-sm btn-outline-primary">
+                <i class="arrow left"></i>Back
+        </a>
+    }
+    @if(Model.metaData.HasNext)
+    {
+        <a asp-action="Models"
+            asp-route-pageNumber="@(Model.metaData.CurrentPage+1)"
+            class="btn btn-sm btn-outline-primary">
+                Next<i class="arrow right"></i>
+        </a>
+    }
+</div>

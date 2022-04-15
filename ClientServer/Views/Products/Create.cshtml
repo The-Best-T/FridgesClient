@@ -5,7 +5,7 @@
  }
  <h1>New product</h1>
 <a asp-action="Products" style="margin-right:100%" 
-     class="btn btn-sm btn-primary">
+     class="btn btn-primary">
      Products  
 </a>
 <form method="post" asp-controller="Products" asp-action="Create">
@@ -20,7 +20,7 @@
         <input asp-for="DefaultQuantity" style='width:300px;margin:auto' class="form-control"/>
         <span asp-validation-for="DefaultQuantity" class="text-danger"></span>
     </div>
-    <div>
+    <div style="margin-top:15px">
         <button type="submit" class="btn btn-success">Create</button>
     </div>
 </form>

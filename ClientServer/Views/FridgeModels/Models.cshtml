@@ -5,7 +5,7 @@
  }
 <h1>List of fridge models</h1>
 <a asp-action="Create" style="margin-right:100%" 
-     class="btn btn-sm btn-primary">
+     class="btn btn-primary">
      Create  
 </a>
 <table class="table">
@@ -29,22 +29,24 @@
         </tr>
     }
 </table>
-@if(Model.metaData.HasPrevious)
-{
-    <a asp-action="Models"
-        asp-route-pageNumber="@(Model.metaData.CurrentPage-1)"
-        class="btn btn-sm btn-primary">
-            Back
-    </a>
-}
-@if(Model.metaData.HasNext)
-{
-    <a asp-action="Models"
-        asp-route-pageNumber="@(Model.metaData.CurrentPage+1)"
-        class="btn btn-sm btn-primary">
-            Next
-    </a>
-}
+<div style="margin-top:15px">
+    @if(Model.metaData.HasPrevious)
+    {
+        <a asp-action="Models"
+            asp-route-pageNumber="@(Model.metaData.CurrentPage-1)"
+            class="btn btn-sm btn-outline-primary">
+                <i class="arrow left"></i>Back
+        </a>
+    }
+    @if(Model.metaData.HasNext)
+    {
+        <a asp-action="Models"
+            asp-route-pageNumber="@(Model.metaData.CurrentPage+1)"
+            class="btn btn-sm btn-outline-primary">
+                Next<i class="arrow right"></i>
+        </a>
+    }
+</div>
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -56,11 +58,11 @@
       <h3>Are you sure?</h3>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
         <form asp-action="Delete" method="post">
             <input type="hidden" id="id" name="id"/>
             <button type="submit" class="btn btn-danger">
-                Delete
+                Yes
             </button>
         </form>
       </div>

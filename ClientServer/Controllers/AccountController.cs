@@ -26,9 +26,9 @@ namespace ClientServer.Controllers
         }
 
         [HttpGet("Login")]
-        public IActionResult Login(string returnUrl = null)
+        public IActionResult Login()
         {
-            return View(new LoginViewModel { ReturnUrl = returnUrl });
+            return View();
         }
 
         [HttpPost("Login")]
@@ -49,14 +49,8 @@ namespace ClientServer.Controllers
                         {
                             var response = JsonConvert.DeserializeObject<LoginResponse>(jsonResponse.Message);
                             HttpContext.Response.Cookies.Append("JWT", response.Token);
-                            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                            {
-                                return Redirect(model.ReturnUrl);
-                            }
-                            else
-                            {
-                                return RedirectToAction("Index", "Home");
-                            }
+
+                            return RedirectToAction("Index", "Home");
                         }
 
                     case 401:

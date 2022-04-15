@@ -5,7 +5,7 @@
  }
  <h1>New model</h1>
 <a asp-action="Models" style="margin-right:100%" 
-     class="btn btn-sm btn-primary">
+     class="btn btn-primary">
      Models  
 </a>
 <form method="post" asp-controller="FridgeModels" asp-action="Create">
@@ -20,7 +20,7 @@
         <input asp-for="Year" style='width:300px;margin:auto' class="form-control"/>
         <span asp-validation-for="Year" class="text-danger"></span>
     </div>
-    <div>
+    <div style="margin-top:15px">
         <button type="submit" class="btn btn-success">Create</button>
     </div>
 </form>

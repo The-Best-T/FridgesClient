@@ -10,6 +10,5 @@ namespace Entities.ViewModels.Account
         [Required(ErrorMessage = "Password is required")]
         [MinLength(8, ErrorMessage = "Min length is 8")]
         public string Password { get; set; }
-        public string ReturnUrl { get; set; }
     }
 }

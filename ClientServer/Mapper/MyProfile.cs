@@ -42,6 +42,9 @@ namespace AutoMapper
             CreateMap<Fridge, FridgeViewModel>();
             CreateMap<CreateFridgeViewModel, Fridge>();
             CreateMap<Fridge, CreateFridgeRequest>();
+            CreateMap<Fridge, UpdateFridgeViewModel>();
+            CreateMap<UpdateFridgeViewModel, Fridge>();
+            CreateMap<Fridge, UpdateFridgeRequest>();
         }
     }
 }

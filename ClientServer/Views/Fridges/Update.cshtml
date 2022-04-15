@@ -1,26 +1,26 @@
-﻿@using Entities.ViewModels.Products
-@model UpdateProductViewModel
+﻿@using Entities.ViewModels.Fridges
+@model UpdateFridgeViewModel
  @{
-    ViewData["Title"] = "Update product";
+    ViewData["Title"] = "Update fridge";
  }
- <h1>Update Product</h1>
-<a asp-action="Product" asp-route-id="@Model.Id" style="margin-right:100%" 
+ <h1>Update Fridge</h1>
+<a asp-action="Fridge" asp-route-id="@Model.Id" style="margin-right:100%" 
      class="btn btn-primary">
      Back  
 </a>
-<form method="post" asp-controller="Products" asp-action="Update">
+<form method="post" asp-controller="Fridges" asp-action="Update">
     <div asp-validation-summary="ModelOnly" id="myCustomSummary" class="text-danger" style="margin:auto"></div>
     <div class="form-group">
-        <label asp-for="Name">Product name</label><br />
+        <label asp-for="Name">Fridge name</label><br />
         <input asp-for="Name" value="@Model.Name"
          style='width:300px;margin:auto' class="form-control"/>
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="DefaultQuantity">Default quantity</label><br />
-        <input asp-for="DefaultQuantity" value="@Model.DefaultQuantity"
+        <label asp-for="OwnerName">Owner name</label><br />
+        <input asp-for="OwnerName" value="@Model.OwnerName"
          style='width:300px;margin:auto' class="form-control"/>
-        <span asp-validation-for="DefaultQuantity" class="text-danger"></span>
+        <span asp-validation-for="OwnerName" class="text-danger"></span>
     </div>
     <input type="hidden" name="Id" value="@Model.Id"/>
     <div style="margin-top:15px">

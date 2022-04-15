@@ -5,7 +5,7 @@
  }
  <h1>Fridge</h1>
 <a asp-action="Fridges" style="margin-right:100%" 
-     class="btn btn-sm btn-primary">
+     class="btn btn-primary">
      Fridges  
 </a>
 <div style="color:#007bff">
@@ -34,7 +34,13 @@
             @Model.Model.Year
     </h3>
 </div>
-<a asp-action="Update" asp-route-id="@Model.Id" 
-     class="btn btn-sm btn-primary">
-     Change  
-</a>
+<div style="margin-top:15px">
+    <a asp-controller="FridgeProducts" asp-action="Products" asp-route-fridgeId="@Model.Id" 
+         class="btn btn-sm btn-info">
+         Products  
+    </a>
+    <a asp-action="Update" asp-route-id="@Model.Id" 
+         class="btn btn-sm btn-primary" style="margin-left:25px">
+         Change  
+    </a>
+</div>

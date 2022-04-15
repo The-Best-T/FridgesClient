@@ -11,6 +11,10 @@
         <li><a href="~/Models" class="navbar-brand">Fridge models</a></li>
         <li><a href="~/Fridges" class="navbar-brand">Fridges</a></li>
         <li><a href="~/Products" class="navbar-brand">Products</a></li>
-        <li><a href="~/Fridges/Fill" class="navbar-brand">Fill fridges</a></li>
+        <li>
+            <form method="post" asp-controller="Fridges" asp-action="FillFridges">
+                <button type="submit" class="btn btn-primary">Fill fridges</button>
+            </form>
+        </li>
     </ul>
 </div>

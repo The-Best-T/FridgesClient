@@ -5,41 +5,12 @@
  }
 
  <h1>New fridge</h1>
-<a asp-action="Fridges" style="margin-right:100%" 
-     class="btn btn-sm btn-primary">
-     Fridges  
+<a asp-action="Models" style="margin-right:100%" 
+     class="btn btn-primary">
+     Models  
 </a>
-@if (Model.Models != null)
-{
-    foreach (var fridgeModel in Model.Models?.fridgeModels)
-    {
-        <label>
-            <input type="radio" name="model" onchange="handleSet(this)" value="@fridgeModel.Id" >
-            @fridgeModel.Name   
-        </label><br />
-    }
-    @if (Model.Models.metaData.HasPrevious)
-    {
-        <a asp-action="Create"
-        asp-route-pageNumber="@(Model.Models.metaData.CurrentPage-1)"
-        class="btn btn-sm btn-primary">
-            Back
-        </a>
-    }
-    @if (Model.Models.metaData.HasNext)
-    {
-        <a asp-action="Create"
-        asp-route-pageNumber="@(Model.Models.metaData.CurrentPage+1)"
-        class="btn btn-sm btn-primary">
-            Next
-        </a>
-    }
-}
 <form method="post" asp-controller="Fridges" asp-action="Create">
     <div asp-validation-summary="ModelOnly" id="myCustomSummary" class="text-danger" style="margin:auto"></div>
-    <div class="form-group">
-        <input asp-for="ModelId" id="modelId" hidden/>
-    </div>
     <div class="form-group">
         <label asp-for="Name">Fridge name</label><br />
         <input asp-for="Name" style='width:300px;margin:auto' class="form-control"/>
@@ -50,13 +21,7 @@
         <input asp-for="OwnerName" style='width:300px;margin:auto' class="form-control"/>
         <span asp-validation-for="OwnerName" class="text-danger"></span>
     </div>
-    <div>
+    <div style="margin-top:15px">
         <button type="submit" class="btn btn-success">Create</button>
     </div>
 </form>
-<script>
-    function handleSet(radio)
-    {
-        document.getElementById("modelId").value=radio.value;
-    }
-</script>
