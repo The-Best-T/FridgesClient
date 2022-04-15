@@ -4,7 +4,7 @@
     ViewData["Title"] = "Fridges";
  }
 <h1>List of fridges</h1>
-<a asp-action="Create" style="margin-right:100%" 
+<a asp-action="Models" style="margin-right:100%" 
      class="btn btn-sm btn-primary">
      Create  
 </a>
@@ -21,12 +21,10 @@
                 </a>
             </td>
             <td>
-                <form asp-action="Delete" method="post">
-                    <input type="hidden" name="id" value="@fridge.Id"/>
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return del()">
-                        Delete
-                    </button>
-                </form>
+                <button type="button" class="btn btn-danger" value="@fridge.Id" 
+                data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="setId(this)">
+                    Delete
+                </button> 
             </td>        
         </tr>
     }
@@ -47,15 +45,32 @@
             Next
     </a>
 }
-<script>
-    function del()
-    {
-        if (confirm('Delete?'))
-        {
-            if (confirm('Are u sure?'))
-            {
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      <h3>Are you sure?</h3>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <form asp-action="Delete" method="post">
+            <input type="hidden" id="id" name="id"/>
+            <button type="submit" class="btn btn-danger">
+                Delete
+            </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
-            }
-        }
+<script>
+    function setId(button)
+    {
+        document.getElementById("id").value=button.value;
     }
 </script>

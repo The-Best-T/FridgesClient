@@ -84,8 +84,8 @@ namespace ClientServer.Controllers
             return RedirectToAction("Fridges");
         }
 
-        [HttpGet("Create")]
-        public async Task<IActionResult> Create([FromQuery] int pageNumber = 1)
+        [HttpGet("Create/Models")]
+        public async Task<IActionResult> Models([FromQuery] int pageNumber = 1)
         {
             string token = HttpContext.Request.Cookies["JWT"];
             string query = $"pageNumber={pageNumber}&pageSize={5}";
@@ -102,11 +102,7 @@ namespace ClientServer.Controllers
                             fridgeModels = _mapper.Map<IEnumerable<FridgeModelViewModel>>(fridgeModels),
                             metaData = JsonConvert.DeserializeObject<MetaData>(jsonResponse.Headres["X-Pagination"])
                         };
-                        var createFridgeViewModel = new CreateFridgeViewModel()
-                        {
-                            Models = fridgeModelsViewModel
-                        };
-                        return View(createFridgeViewModel);
+                        return View(fridgeModelsViewModel);
                     }
                 case 401:
                     {
@@ -118,6 +114,9 @@ namespace ClientServer.Controllers
                     }
             }
         }
+
+        [HttpGet("Create/Models/{modelId}")]
+
 
         [HttpPost("Create")]
         public async Task<IActionResult> Create(CreateFridgeViewModel model)
@@ -141,8 +140,9 @@ namespace ClientServer.Controllers
                         }
                     case 404:
                         {
-                            ModelState.AddModelError("","This model not found");
-                        }break;
+                            ModelState.AddModelError("", "This model not found");
+                        }
+                        break;
                     default:
                         {
                             return RedirectToAction("Fridges");
