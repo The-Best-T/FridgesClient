@@ -5,7 +5,7 @@
  }
  <h1>Product</h1>
 <a asp-action="Products" style="margin-right:100%" 
-     class="btn btn-sm btn-primary">
+     class="btn btn-primary">
      Products  
 </a>
 <div style="color:#007bff">
@@ -22,7 +22,9 @@
             @Model.DefaultQuantity
     </h3>
 </div>
-<a asp-action="Update" asp-route-id="@Model.Id" 
-     class="btn btn-sm btn-primary">
-     Change  
-</a>
+<div style="margin-top:15px">
+    <a asp-action="Update" asp-route-id="@Model.Id" 
+         class="btn btn-sm btn-primary">
+         Change  
+    </a>
+</div>

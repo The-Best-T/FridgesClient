@@ -33,7 +33,7 @@ namespace ClientServer.Controllers
         public async Task<IActionResult> Products([FromQuery] int pageNumber = 1)
         {
             string token = HttpContext.Request.Cookies["JWT"];
-            string query = $"pageNumber={pageNumber}&pageSize={3}";
+            string query = $"pageNumber={pageNumber}&pageSize={5}";
 
             var jsonResponse = await _messenger.GetRequestAsync("https://localhost:44381/api/products", token, query);
             switch (jsonResponse.StatusCode)
@@ -217,7 +217,7 @@ namespace ClientServer.Controllers
                             };
                             foreach (var error in productResponse.Errors)
                                 foreach (var message in error.Value)
-                                    ModelState.AddModelError(error.Key, message);
+                                    ModelState.AddModelError("", message);
                         }
                         break;
                     case 401:

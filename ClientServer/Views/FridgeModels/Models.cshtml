@@ -5,7 +5,7 @@
  }
 <h1>List of fridge models</h1>
 <a asp-action="Create" style="margin-right:100%" 
-     class="btn btn-sm btn-primary">
+     class="btn btn-primary">
      Create  
 </a>
 <table class="table">
@@ -21,41 +21,58 @@
                 </a>
             </td>
             <td>
-                <form asp-action="Delete" method="post">
-                    <input type="hidden" name="id" value="@fridgeModel.Id"/>
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return del()">
-                        Delete
-                    </button>
-                </form>
+                <button type="button" class="btn btn-danger" value="@fridgeModel.Id" 
+                data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="setId(this)">
+                    Delete
+                </button> 
             </td>        
         </tr>
     }
 </table>
-@if(Model.metaData.HasPrevious)
-{
-    <a asp-action="Models"
-        asp-route-pageNumber="@(Model.metaData.CurrentPage-1)"
-        class="btn btn-sm btn-primary">
-            Back
-    </a>
-}
-@if(Model.metaData.HasNext)
-{
-    <a asp-action="Models"
-        asp-route-pageNumber="@(Model.metaData.CurrentPage+1)"
-        class="btn btn-sm btn-primary">
-            Next
-    </a>
-}
-<script>
-    function del()
+<div style="margin-top:15px">
+    @if(Model.metaData.HasPrevious)
     {
-        if (confirm('Delete?'))
-        {
-            if (confirm('Are u sure?'))
-            {
+        <a asp-action="Models"
+            asp-route-pageNumber="@(Model.metaData.CurrentPage-1)"
+            class="btn btn-sm btn-outline-primary">
+                <i class="arrow left"></i>Back
+        </a>
+    }
+    @if(Model.metaData.HasNext)
+    {
+        <a asp-action="Models"
+            asp-route-pageNumber="@(Model.metaData.CurrentPage+1)"
+            class="btn btn-sm btn-outline-primary">
+                Next<i class="arrow right"></i>
+        </a>
+    }
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      <h3>Are you sure?</h3>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <form asp-action="Delete" method="post">
+            <input type="hidden" id="id" name="id"/>
+            <button type="submit" class="btn btn-danger">
+                Yes
+            </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
-            }
-        }
+<script>
+    function setId(button)
+    {
+        document.getElementById("id").value=button.value;
     }
 </script>

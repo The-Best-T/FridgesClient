@@ -7,6 +7,9 @@ using Entities.ViewModels.Products;
 using Entities.ViewModels.FridgeModels;
 using Entities.Requests.FridgeModels;
 using Entities.Responses.FridgeModels;
+using Entities.Responses.Fridges;
+using Entities.ViewModels.Fridges;
+using Entities.Requests.Fridges;
 
 namespace AutoMapper
 {
@@ -35,6 +38,13 @@ namespace AutoMapper
             CreateMap<UpdateFridgeModelViewModel, FridgeModel>();
             CreateMap<FridgeModel, UpdateFridgeModelRequest>();
 
+            CreateMap<FridgeResponse, Fridge>();
+            CreateMap<Fridge, FridgeViewModel>();
+            CreateMap<CreateFridgeViewModel, Fridge>();
+            CreateMap<Fridge, CreateFridgeRequest>();
+            CreateMap<Fridge, UpdateFridgeViewModel>();
+            CreateMap<UpdateFridgeViewModel, Fridge>();
+            CreateMap<Fridge, UpdateFridgeRequest>();
         }
     }
 }

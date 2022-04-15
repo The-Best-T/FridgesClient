@@ -5,7 +5,7 @@
  }
  <h1>Update model</h1>
 <a asp-action="Model" asp-route-id="@Model.Id" style="margin-right:100%" 
-     class="btn btn-sm btn-primary">
+     class="btn btn-primary">
      Back  
 </a>
 <form method="post" asp-controller="FridgeModels" asp-action="Update">
@@ -23,7 +23,7 @@
         <span asp-validation-for="Year" class="text-danger"></span>
     </div>
     <input type="hidden" name="Id" value="@Model.Id"/>
-    <div>
+    <div style="margin-top:15px">
         <button type="submit" class="btn btn-success">Update</button>
     </div>
 </form>

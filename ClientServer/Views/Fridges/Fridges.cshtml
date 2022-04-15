@@ -1,40 +1,38 @@
-﻿@using Entities.ViewModels.Products
-@model ProductsViewModel
+﻿@using Entities.ViewModels.Fridges
+@model FridgesViewModel
  @{
-    ViewData["Title"] = "Products";
+    ViewData["Title"] = "Fridges";
  }
-<h1>List of products</h1>
-<a asp-action="Create" style="margin-right:100%" 
+<h1>List of fridges</h1>
+<a asp-action="Models" style="margin-right:100%" 
      class="btn btn-primary">
      Create  
 </a>
 <table class="table">
-    @foreach (var product in Model.products)
+    @foreach (var fridge in Model.fridges)
     {
         <tr>
-            <td>@product.Name</td>
+            <td>@fridge.Name</td>
             <td>
-                <a asp-action="Product" 
-                    asp-route-id="@product.Id"
+                <a asp-action="Fridge" 
+                    asp-route-id="@fridge.Id"
                     class="btn btn-sm btn-info">
                         Info
                 </a>
             </td>
             <td>
-               <button type="button" class="btn btn-danger" value="@product.Id" 
+                <button type="button" class="btn btn-danger" value="@fridge.Id" 
                 data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="setId(this)">
                     Delete
                 </button> 
-            </td>
-            <td>
-            </td>
+            </td>        
         </tr>
     }
 </table>
 <div style="margin-top:15px">
     @if(Model.metaData.HasPrevious)
     {
-        <a asp-action="Products"
+        <a asp-action="Fridges"
             asp-route-pageNumber="@(Model.metaData.CurrentPage-1)"
             class="btn btn-sm btn-outline-primary">
                 <i class="arrow left"></i>Back
@@ -42,7 +40,7 @@
     }
     @if(Model.metaData.HasNext)
     {
-        <a asp-action="Products"
+        <a asp-action="Fridges"
             asp-route-pageNumber="@(Model.metaData.CurrentPage+1)"
             class="btn btn-sm btn-outline-primary">
                 Next<i class="arrow right"></i>
