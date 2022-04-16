@@ -3,8 +3,10 @@ using Contracts;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Entities.Requests.FridgeProducts;
+using Entities.Responses.Account;
 using Entities.Responses.FridgeProducts;
 using Entities.ViewModels.FridgeProducts;
+using Entities.ViewModels.Products;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using NLog;
@@ -67,7 +69,7 @@ namespace ClientServer.Controllers
             }
         }
 
-        [HttpPost("{id}")]
+        [HttpPost]
         public async Task<IActionResult> Delete(Guid fridgeId, Guid id)
         {
             if (fridgeId == Guid.Empty)
@@ -169,7 +171,7 @@ namespace ClientServer.Controllers
         }
 
         [HttpPost("Update")]
-        public async Task<IActionResult> Update(Guid fridgeId,UpdateFridgeProductViewModel model)
+        public async Task<IActionResult> Update(Guid fridgeId, UpdateFridgeProductViewModel model)
         {
             if (fridgeId == Guid.Empty)
                 return RedirectToAction("Fridges", "Fridges");
@@ -188,7 +190,7 @@ namespace ClientServer.Controllers
                 {
                     case 204:
                         {
-                            return RedirectToAction("Product", new { fridgeId=fridgeId,id = fridgeProduct.ProductId });
+                            return RedirectToAction("Product", new { fridgeId = fridgeId, id = fridgeProduct.ProductId });
                         }
                     case 404:
                         {
@@ -211,12 +213,108 @@ namespace ClientServer.Controllers
                         }
                     default:
                         {
-                            return RedirectToAction("Products",new { fridgeId=fridgeId});
+                            return RedirectToAction("Products", new { fridgeId = fridgeId });
                         }
 
                 }
             }
             model.FridgeId = fridgeId;
+            return View(model);
+        }
+
+        [HttpGet("Create/Products")]
+        public async Task<IActionResult> AllProducts(Guid fridgeId, [FromQuery] int pageNumber = 1)
+        {
+            if (fridgeId == Guid.Empty)
+                return RedirectToAction("Fridges", "Fridges");
+            string token = HttpContext.Request.Cookies["JWT"];
+            string query = $"pageNumber={pageNumber}&pageSize={5}";
+
+            var jsonResponse = await _messenger.GetRequestAsync("https://localhost:44381/api/products", token, query);
+            switch (jsonResponse.StatusCode)
+            {
+                case 200:
+                    {
+                        var productsResponse = JsonConvert.DeserializeObject<IEnumerable<ProductResponse>>(jsonResponse.Message);
+                        var products = _mapper.Map<IEnumerable<Product>>(productsResponse);
+                        var productsViewModel = new ProductsViewModel()
+                        {
+                            Products = _mapper.Map<IEnumerable<ProductViewModel>>(products),
+                            MetaData = JsonConvert.DeserializeObject<MetaData>(jsonResponse.Headres["X-Pagination"])
+                        };
+                        ViewBag.fridgeId = fridgeId;
+                        return View(productsViewModel);
+                    }
+                case 401:
+                    {
+                        return RedirectToAction("Login", "Account");
+                    }
+                default:
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+            }
+        }
+
+        [HttpGet("Create/Products/{productId}")]
+        public IActionResult Create(Guid fridgeId, Guid productId)
+        {
+            if (fridgeId == Guid.Empty)
+                return RedirectToAction("Fridges", "Fridges");
+            if (productId == Guid.Empty)
+                return RedirectToAction("AllProducts", new { fridgeId = fridgeId });
+
+            return View(
+                new CreateFridgeProductViewModel()
+                {
+                    FridgeId = fridgeId,
+                    ProductId = productId
+                });
+        }
+
+        [HttpPost("Create/Products/{productId}")]
+        public async Task<IActionResult> Create(Guid fridgeId, Guid productId, CreateFridgeProductViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                string token = HttpContext.Request.Cookies["JWT"];
+
+                model.ProductId = productId;
+                model.FridgeId = fridgeId;
+
+                var fridgeProduct = _mapper.Map<FridgeProduct>(model);
+                var createFridgeProductRequest = _mapper.Map<CreateFridgeProductRequest>(fridgeProduct);
+
+                string jsonRequest = JsonConvert.SerializeObject(createFridgeProductRequest);
+                var jsonResponse = await _messenger.PostRequestAsync($"https://localhost:44381/api/fridges/{fridgeId}/products", token, jsonRequest);
+                _logger.LogInfo(jsonResponse.StatusCode.ToString());
+                switch (jsonResponse.StatusCode)
+                {
+                    case 401:
+                        {
+                            return RedirectToAction("Login", "Account");
+                        }
+                    case int code when (code == 400 || code == 422):
+                        {
+                            var fridgeProductResponse = new CreateFridgeProductResponse()
+                            {
+                                Errors = JsonConvert.DeserializeObject<Dictionary<string, IEnumerable<string>>>(jsonResponse.Message)
+                            };
+                            foreach (var error in fridgeProductResponse.Errors)
+                                foreach (var message in error.Value)
+                                    ModelState.AddModelError(error.Key, message);
+                        }
+                        break;
+                    case 404:
+                        {
+                            return RedirectToAction("Fridges", "Fridges");
+                        }
+                    default:
+                        {
+                            return RedirectToAction("Products", new { fridgeId = fridgeId });
+                        }
+                }
+            }
             return View(model);
         }
     }

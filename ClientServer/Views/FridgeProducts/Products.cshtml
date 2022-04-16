@@ -9,7 +9,7 @@
          class="btn btn-primary">
          Back  
     </a>
-    <a asp-action="Create" style="margin-right:100%; margin-top:15px" 
+    <a asp-action="AllProducts" asp-route-fridgeId="@Model.FridgeId" style="margin-right:100%; margin-top:15px" 
          class="btn btn-primary">
          Add
     </a>
@@ -33,15 +33,13 @@
                     Delete
                 </button> 
             </td>
-            <td>
-            </td>
         </tr>
     }
 </table>
 <div style="margin-top:15px">
     @if(Model.MetaData.HasPrevious)
     {
-        <a asp-action="Products"
+        <a asp-action="Products" asp-route-fridgeId="@Model.FridgeId"
             asp-route-pageNumber="@(Model.MetaData.CurrentPage-1)"
             class="btn btn-sm btn-outline-primary">
                 <i class="arrow left"></i>Back
@@ -49,7 +47,7 @@
     }
     @if(Model.MetaData.HasNext)
     {
-        <a asp-action="Products"
+        <a asp-action="Products" asp-route-fridgeId="@Model.FridgeId"
             asp-route-pageNumber="@(Model.MetaData.CurrentPage+1)"
             class="btn btn-sm btn-outline-primary">
                 Next<i class="arrow right"></i>

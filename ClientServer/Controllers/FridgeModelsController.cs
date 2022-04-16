@@ -59,7 +59,7 @@ namespace ClientServer.Controllers
             }
         }
 
-        [HttpPost("{id}")]
+        [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
             if (id == Guid.Empty)

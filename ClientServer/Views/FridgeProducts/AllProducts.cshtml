@@ -1,0 +1,43 @@
+﻿@using Entities.ViewModels.Products
+@model ProductsViewModel
+ @{
+    ViewData["Title"] = "All Products";
+ }
+<h1>List of products for add in the fridge</h1>
+<a asp-action="Products" asp-route-fridgeId="@ViewBag.fridgeId" style="margin-right:100%" 
+     class="btn btn-primary">
+     Back  
+</a>
+<table class="table">
+    @foreach (var product in Model.Products)
+    {
+        <tr>
+            <td>
+                <a asp-action="Create" 
+                 asp-route-fridgeId="@ViewBag.fridgeId"
+                 asp-route-productId="@product.Id"
+                 class="btn btn-sm btn-outline-primary">
+                 @product.Name
+                </a>
+            </td>
+        </tr>
+    }
+</table>
+<div style="margin-top:15px">
+    @if(Model.MetaData.HasPrevious)
+    {
+        <a asp-action="AllProducts" asp-route-fridgeId="@ViewBag.fridgeId"
+            asp-route-pageNumber="@(Model.MetaData.CurrentPage-1)"
+            class="btn btn-sm btn-outline-primary">
+                <i class="arrow left"></i>Back
+        </a>
+    }
+    @if(Model.MetaData.HasNext)
+    {
+        <a asp-action="AllProducts" asp-route-fridgeId="@ViewBag.fridgeId"
+            asp-route-pageNumber="@(Model.MetaData.CurrentPage+1)"
+            class="btn btn-sm btn-outline-primary">
+                Next<i class="arrow right"></i>
+        </a>
+    }
+</div>

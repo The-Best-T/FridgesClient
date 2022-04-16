@@ -60,10 +60,10 @@ namespace ClientServer.Controllers
             }
         }
 
-        [HttpPost("{id}")]
+        [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
-            if (id == Guid.Empty) 
+            if (id == Guid.Empty)
                 return RedirectToAction("Fridges");
 
             string token = HttpContext.Request.Cookies["JWT"];
@@ -119,12 +119,13 @@ namespace ClientServer.Controllers
         {
             if (modelId == Guid.Empty)
                 return RedirectToAction("Models");
-            return View();
+            return View(new CreateFridgeViewModel() { ModelId = modelId });
         }
 
         [HttpPost("Create/Models/{modelId}")]
         public async Task<IActionResult> Create(Guid modelId, CreateFridgeViewModel model)
         {
+            ;
             if (ModelState.IsValid)
             {
                 string token = HttpContext.Request.Cookies["JWT"];
@@ -163,7 +164,7 @@ namespace ClientServer.Controllers
                         }
                 }
             }
-            return RedirectToAction("Create");
+            return View(model);
         }
 
         [HttpGet("{id}")]

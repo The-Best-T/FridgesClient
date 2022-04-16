@@ -60,7 +60,7 @@ namespace ClientServer.Controllers
             }
         }
 
-        [HttpPost("{id}")]
+        [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
             if (id == Guid.Empty)
@@ -131,7 +131,7 @@ namespace ClientServer.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Product(Guid id)
         {
-            if (id == Guid.Empty) 
+            if (id == Guid.Empty)
                 return RedirectToAction("Products");
 
             string token = HttpContext.Request.Cookies["JWT"];
@@ -160,7 +160,7 @@ namespace ClientServer.Controllers
         [HttpGet("Update")]
         public async Task<IActionResult> Update([FromQuery] Guid id)
         {
-            if (id == Guid.Empty) 
+            if (id == Guid.Empty)
                 return RedirectToAction("Products");
 
             string token = HttpContext.Request.Cookies["JWT"];

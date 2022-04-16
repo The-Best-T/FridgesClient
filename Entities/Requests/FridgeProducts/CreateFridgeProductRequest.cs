@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Entities.Requests.FridgeProducts
 {
-    internal class CreateFridgeProductRequest
+    public class CreateFridgeProductRequest : ManipulateFridgeProductRequest
     {
+        public Guid ProductId { get; set; }
     }
 }
