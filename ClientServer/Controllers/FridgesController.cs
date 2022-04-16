@@ -45,7 +45,7 @@ namespace ClientServer.Controllers
                         var fridgesViewModel = new FridgesViewModel()
                         {
                             fridges = _mapper.Map<IEnumerable<FridgeViewModel>>(fridges),
-                            metaData = JsonConvert.DeserializeObject<MetaData>(jsonResponse.Headres["X-Pagination"])
+                            MetaData = JsonConvert.DeserializeObject<MetaData>(jsonResponse.Headres["X-Pagination"])
                         };
                         return View(fridgesViewModel);
                     }
@@ -60,28 +60,27 @@ namespace ClientServer.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            if (id != Guid.Empty)
+            if (id == Guid.Empty) 
+                return RedirectToAction("Fridges");
+
+            string token = HttpContext.Request.Cookies["JWT"];
+
+            var jsonResponse = await _messenger.DeleteRequestAsync($"https://localhost:44381/api/fridges/{id}", token);
+
+            switch (jsonResponse.StatusCode)
             {
-                string token = HttpContext.Request.Cookies["JWT"];
-
-                var jsonResponse = await _messenger.DeleteRequestAsync($"https://localhost:44381/api/fridges/{id}", token);
-
-                switch (jsonResponse.StatusCode)
-                {
-                    case 401:
-                        {
-                            return RedirectToAction("Login", "Account");
-                        }
-                    default:
-                        {
-                            return RedirectToAction("Fridges");
-                        }
-                }
+                case 401:
+                    {
+                        return RedirectToAction("Login", "Account");
+                    }
+                default:
+                    {
+                        return RedirectToAction("Fridges");
+                    }
             }
-            return RedirectToAction("Fridges");
         }
 
         [HttpGet("Create/Models")]
@@ -100,7 +99,7 @@ namespace ClientServer.Controllers
                         var fridgeModelsViewModel = new FridgeModelsViewModel()
                         {
                             fridgeModels = _mapper.Map<IEnumerable<FridgeModelViewModel>>(fridgeModels),
-                            metaData = JsonConvert.DeserializeObject<MetaData>(jsonResponse.Headres["X-Pagination"])
+                            MetaData = JsonConvert.DeserializeObject<MetaData>(jsonResponse.Headres["X-Pagination"])
                         };
                         return View(fridgeModelsViewModel);
                     }
@@ -118,7 +117,8 @@ namespace ClientServer.Controllers
         [HttpGet("Create/Models/{modelId}")]
         public IActionResult Create(Guid modelId)
         {
-            if (modelId == Guid.Empty) return RedirectToAction("Models");
+            if (modelId == Guid.Empty)
+                return RedirectToAction("Models");
             return View();
         }
 
@@ -169,61 +169,59 @@ namespace ClientServer.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Fridge(Guid id)
         {
-            if (id != Guid.Empty)
-            {
-                string token = HttpContext.Request.Cookies["JWT"];
+            if (id == Guid.Empty)
+                return RedirectToAction("Fridges");
 
-                var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/fridges/{id}", token, null);
-                switch (jsonResponse.StatusCode)
-                {
-                    case 200:
-                        {
-                            var fridgeResponse = JsonConvert.DeserializeObject<FridgeResponse>(jsonResponse.Message);
-                            var fridge = _mapper.Map<Fridge>(fridgeResponse);
-                            var fridgeViewModel = _mapper.Map<FridgeViewModel>(fridge);
-                            return View(fridgeViewModel);
-                        }
-                    case 401:
-                        {
-                            return RedirectToAction("Login", "Account");
-                        }
-                    default:
-                        {
-                            return RedirectToAction("Fridges");
-                        }
-                }
+            string token = HttpContext.Request.Cookies["JWT"];
+
+            var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/fridges/{id}", token, null);
+            switch (jsonResponse.StatusCode)
+            {
+                case 200:
+                    {
+                        var fridgeResponse = JsonConvert.DeserializeObject<FridgeResponse>(jsonResponse.Message);
+                        var fridge = _mapper.Map<Fridge>(fridgeResponse);
+                        var fridgeViewModel = _mapper.Map<FridgeViewModel>(fridge);
+                        return View(fridgeViewModel);
+                    }
+                case 401:
+                    {
+                        return RedirectToAction("Login", "Account");
+                    }
+                default:
+                    {
+                        return RedirectToAction("Fridges");
+                    }
             }
-            return RedirectToAction("Fridges");
         }
 
         [HttpGet("Update")]
         public async Task<IActionResult> Update([FromQuery] Guid id)
         {
-            if (id != Guid.Empty)
-            {
-                string token = HttpContext.Request.Cookies["JWT"];
+            if (id == Guid.Empty)
+                return RedirectToAction("Fridges");
 
-                var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/fridges/{id}", token, null);
-                switch (jsonResponse.StatusCode)
-                {
-                    case 200:
-                        {
-                            var fridgeResponse = JsonConvert.DeserializeObject<FridgeResponse>(jsonResponse.Message);
-                            var fridge = _mapper.Map<Fridge>(fridgeResponse);
-                            var updateFridgeViewModel = _mapper.Map<UpdateFridgeViewModel>(fridge);
-                            return View(updateFridgeViewModel);
-                        }
-                    case 401:
-                        {
-                            return RedirectToAction("Login", "Account");
-                        }
-                    default:
-                        {
-                            return RedirectToAction("Fridges");
-                        }
-                }
+            string token = HttpContext.Request.Cookies["JWT"];
+
+            var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/fridges/{id}", token, null);
+            switch (jsonResponse.StatusCode)
+            {
+                case 200:
+                    {
+                        var fridgeResponse = JsonConvert.DeserializeObject<FridgeResponse>(jsonResponse.Message);
+                        var fridge = _mapper.Map<Fridge>(fridgeResponse);
+                        var updateFridgeViewModel = _mapper.Map<UpdateFridgeViewModel>(fridge);
+                        return View(updateFridgeViewModel);
+                    }
+                case 401:
+                    {
+                        return RedirectToAction("Login", "Account");
+                    }
+                default:
+                    {
+                        return RedirectToAction("Fridges");
+                    }
             }
-            return RedirectToAction("Fridges");
         }
 
         [HttpPost("Update")]
@@ -265,7 +263,6 @@ namespace ClientServer.Controllers
                         {
                             return RedirectToAction("Fridges");
                         }
-
                 }
             }
             return View(model);
@@ -275,7 +272,7 @@ namespace ClientServer.Controllers
         public async Task<IActionResult> FillFridges()
         {
             string token = HttpContext.Request.Cookies["JWT"];
-            var jsonResponse = await _messenger.PostRequestAsync($"https://localhost:44381/api/fridges/fill", token,"");
+            var jsonResponse = await _messenger.PostRequestAsync($"https://localhost:44381/api/fridges/fill", token, "");
 
             switch (jsonResponse.StatusCode)
             {
@@ -285,9 +282,8 @@ namespace ClientServer.Controllers
                     }
                 default:
                     {
-                        return RedirectToAction("Index","Home");
+                        return RedirectToAction("Index", "Home");
                     }
-
             }
         }
     }

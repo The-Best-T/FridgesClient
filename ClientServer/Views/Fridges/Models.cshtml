@@ -23,18 +23,18 @@
     }
 </table>
 <div style="margin-top:15px">
-    @if(Model.metaData.HasPrevious)
+    @if(Model.MetaData.HasPrevious)
     {
         <a asp-action="Models"
-            asp-route-pageNumber="@(Model.metaData.CurrentPage-1)"
+            asp-route-pageNumber="@(Model.MetaData.CurrentPage-1)"
             class="btn btn-sm btn-outline-primary">
                 <i class="arrow left"></i>Back
         </a>
     }
-    @if(Model.metaData.HasNext)
+    @if(Model.MetaData.HasNext)
     {
         <a asp-action="Models"
-            asp-route-pageNumber="@(Model.metaData.CurrentPage+1)"
+            asp-route-pageNumber="@(Model.MetaData.CurrentPage+1)"
             class="btn btn-sm btn-outline-primary">
                 Next<i class="arrow right"></i>
         </a>

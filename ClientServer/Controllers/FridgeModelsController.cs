@@ -44,7 +44,7 @@ namespace ClientServer.Controllers
                         var fridgeModelsViewModel = new FridgeModelsViewModel()
                         {
                             fridgeModels = _mapper.Map<IEnumerable<FridgeModelViewModel>>(fridgeModels),
-                            metaData = JsonConvert.DeserializeObject<MetaData>(jsonResponse.Headres["X-Pagination"])
+                            MetaData = JsonConvert.DeserializeObject<MetaData>(jsonResponse.Headres["X-Pagination"])
                         };
                         return View(fridgeModelsViewModel);
                     }
@@ -59,28 +59,28 @@ namespace ClientServer.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            if (id != Guid.Empty)
+            if (id == Guid.Empty)
+                return RedirectToAction("Models");
+
+            string token = HttpContext.Request.Cookies["JWT"];
+
+            var jsonResponse = await _messenger.DeleteRequestAsync($"https://localhost:44381/api/models/{id}", token);
+
+            switch (jsonResponse.StatusCode)
             {
-                string token = HttpContext.Request.Cookies["JWT"];
-
-                var jsonResponse = await _messenger.DeleteRequestAsync($"https://localhost:44381/api/models/{id}", token);
-
-                switch (jsonResponse.StatusCode)
-                {
-                    case 401:
-                        {
-                            return RedirectToAction("Login", "Account");
-                        }
-                    default:
-                        {
-                            return RedirectToAction("Models");
-                        }
-                }
+                case 401:
+                    {
+                        return RedirectToAction("Login", "Account");
+                    }
+                default:
+                    {
+                        return RedirectToAction("Models");
+                    }
             }
-            return RedirectToAction("Models");
+
         }
 
         [HttpGet("Create")]
@@ -131,61 +131,60 @@ namespace ClientServer.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Model(Guid id)
         {
-            if (id != Guid.Empty)
-            {
-                string token = HttpContext.Request.Cookies["JWT"];
+            if (id == Guid.Empty)
+                return RedirectToAction("Models");
 
-                var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/models/{id}", token, null);
-                switch (jsonResponse.StatusCode)
-                {
-                    case 200:
-                        {
-                            var fridgeModelResponse = JsonConvert.DeserializeObject<FridgeModelResponse>(jsonResponse.Message);
-                            var fridgeModel = _mapper.Map<FridgeModel>(fridgeModelResponse);
-                            var fridgeModelViewModel = _mapper.Map<FridgeModelViewModel>(fridgeModel);
-                            return View(fridgeModelViewModel);
-                        }
-                    case 401:
-                        {
-                            return RedirectToAction("Login", "Account");
-                        }
-                    default:
-                        {
-                            return RedirectToAction("Models");
-                        }
-                }
+            string token = HttpContext.Request.Cookies["JWT"];
+
+            var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/models/{id}", token, null);
+            switch (jsonResponse.StatusCode)
+            {
+                case 200:
+                    {
+                        var fridgeModelResponse = JsonConvert.DeserializeObject<FridgeModelResponse>(jsonResponse.Message);
+                        var fridgeModel = _mapper.Map<FridgeModel>(fridgeModelResponse);
+                        var fridgeModelViewModel = _mapper.Map<FridgeModelViewModel>(fridgeModel);
+                        return View(fridgeModelViewModel);
+                    }
+                case 401:
+                    {
+                        return RedirectToAction("Login", "Account");
+                    }
+                default:
+                    {
+                        return RedirectToAction("Models");
+                    }
             }
-            return RedirectToAction("Models");
+
         }
 
         [HttpGet("Update")]
         public async Task<IActionResult> Update([FromQuery] Guid id)
         {
-            if (id != Guid.Empty)
-            {
-                string token = HttpContext.Request.Cookies["JWT"];
+            if (id == Guid.Empty)
+                return RedirectToAction("Models");
 
-                var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/models/{id}", token, null);
-                switch (jsonResponse.StatusCode)
-                {
-                    case 200:
-                        {
-                            var fridgeModelResponse = JsonConvert.DeserializeObject<FridgeModel>(jsonResponse.Message);
-                            var fridgeModel = _mapper.Map<FridgeModel>(fridgeModelResponse);
-                            var updateFridgeModelViewModel = _mapper.Map<UpdateFridgeModelViewModel>(fridgeModel);
-                            return View(updateFridgeModelViewModel);
-                        }
-                    case 401:
-                        {
-                            return RedirectToAction("Login", "Account");
-                        }
-                    default:
-                        {
-                            return RedirectToAction("Models");
-                        }
-                }
+            string token = HttpContext.Request.Cookies["JWT"];
+
+            var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/models/{id}", token, null);
+            switch (jsonResponse.StatusCode)
+            {
+                case 200:
+                    {
+                        var fridgeModelResponse = JsonConvert.DeserializeObject<FridgeModel>(jsonResponse.Message);
+                        var fridgeModel = _mapper.Map<FridgeModel>(fridgeModelResponse);
+                        var updateFridgeModelViewModel = _mapper.Map<UpdateFridgeModelViewModel>(fridgeModel);
+                        return View(updateFridgeModelViewModel);
+                    }
+                case 401:
+                    {
+                        return RedirectToAction("Login", "Account");
+                    }
+                default:
+                    {
+                        return RedirectToAction("Models");
+                    }
             }
-            return RedirectToAction("Models");
         }
 
         [HttpPost("Update")]
