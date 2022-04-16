@@ -66,13 +66,13 @@ namespace ClientServer.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Delete(Guid fridgeId, Guid id)
         {
             if (fridgeId == Guid.Empty)
                 return RedirectToAction("Fridges", "Fridges");
             if (id == Guid.Empty)
-                RedirectToAction("Products", new { fridgeId = fridgeId });
+                return RedirectToAction("Products", new { fridgeId = fridgeId });
 
             string token = HttpContext.Request.Cookies["JWT"];
 
@@ -84,9 +84,49 @@ namespace ClientServer.Controllers
                     {
                         return RedirectToAction("Login", "Account");
                     }
+                case 404:
+                    {
+                        return RedirectToAction("Fridge","Fridges", new { id = fridgeId });
+                    }
                 default:
                     {
                         return RedirectToAction("Products",new { fridgeId = fridgeId });
+                    }
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Product(Guid fridgeId,Guid id)
+        {
+            if (fridgeId == Guid.Empty)
+                return RedirectToAction("Fridges", "Fridges");
+            if (id == Guid.Empty)
+                return RedirectToAction("Products", new { fridgeId = fridgeId });
+
+            string token = HttpContext.Request.Cookies["JWT"];
+
+            var jsonResponse = await _messenger.GetRequestAsync($"https://localhost:44381/api/fridges/{fridgeId}/products/{id}", token, null);
+            switch (jsonResponse.StatusCode)
+            {
+                case 200:
+                    {
+                        var fridgeProductResponse = JsonConvert.DeserializeObject<FridgeProductResponse>(jsonResponse.Message);
+                        var fridgeProduct = _mapper.Map<FridgeProduct>(fridgeProductResponse);
+                        var fridgeProductViewModel = _mapper.Map<FridgeProductViewModel>(fridgeProduct);
+                        fridgeProductViewModel.FridgeId = fridgeId;
+                        return View(fridgeProductViewModel);
+                    }
+                case 401:
+                    {
+                        return RedirectToAction("Login", "Account");
+                    }
+                case 404:
+                    {
+                        return RedirectToAction("Fridge", "Fridges", new { id = fridgeId });
+                    }
+                default:
+                    {
+                        return RedirectToAction("Products", new { fridgeId=fridgeId} );
                     }
             }
         }
