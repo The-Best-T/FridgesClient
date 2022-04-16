@@ -275,7 +275,7 @@ namespace ClientServer.Controllers
         public async Task<IActionResult> FillFridges()
         {
             string token = HttpContext.Request.Cookies["JWT"];
-            var jsonResponse = await _messenger.PostRequestAsync($"https://localhost:44381/api/fridges/fill", token);
+            var jsonResponse = await _messenger.PostRequestAsync($"https://localhost:44381/api/fridges/fill", token,"");
 
             switch (jsonResponse.StatusCode)
             {
