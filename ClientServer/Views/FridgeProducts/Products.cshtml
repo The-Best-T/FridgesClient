@@ -1,27 +1,34 @@
-﻿@using Entities.ViewModels.Products
-@model ProductsViewModel
+﻿@using Entities.ViewModels.FridgeProducts
+@model FridgeProductsViewModel
  @{
-    ViewData["Title"] = "Products";
+    ViewData["Title"] = "Products from the fridge";
  }
-<h1>List of products</h1>
-<a asp-action="Create" style="margin-right:100%" 
-     class="btn btn-primary">
-     Create  
-</a>
+<h1>List of products from the fridge</h1>
+<div style=" margin-top:15px">
+    <a asp-controller="Fridges" asp-action="Fridge" asp-route-id="@Model.FridgeId" style="margin-right:100%" 
+         class="btn btn-primary">
+         Back  
+    </a>
+    <a asp-action="AllProducts" asp-route-fridgeId="@Model.FridgeId" style="margin-right:100%; margin-top:15px" 
+         class="btn btn-primary">
+         Add
+    </a>
+</div>
 <table class="table">
-    @foreach (var product in Model.Products)
+    @foreach (var product in Model.fridgeProducts)
     {
         <tr>
-            <td>@product.Name</td>
+            <td>@product.ProductName</td>
             <td>
-                <a asp-action="Product" 
-                    asp-route-id="@product.Id"
+                <a asp-action="Product"
+                    asp-route-fridgeId="@Model.FridgeId"
+                    asp-route-id="@product.ProductId"
                     class="btn btn-sm btn-info">
                         Info
                 </a>
             </td>
             <td>
-               <button type="button" class="btn btn-danger" value="@product.Id" 
+               <button type="button" class="btn btn-danger" value="@product.ProductId" 
                 data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="setId(this)">
                     Delete
                 </button> 
@@ -32,7 +39,7 @@
 <div style="margin-top:15px">
     @if(Model.MetaData.HasPrevious)
     {
-        <a asp-action="Products"
+        <a asp-action="Products" asp-route-fridgeId="@Model.FridgeId"
             asp-route-pageNumber="@(Model.MetaData.CurrentPage-1)"
             class="btn btn-sm btn-outline-primary">
                 <i class="arrow left"></i>Back
@@ -40,7 +47,7 @@
     }
     @if(Model.MetaData.HasNext)
     {
-        <a asp-action="Products"
+        <a asp-action="Products" asp-route-fridgeId="@Model.FridgeId"
             asp-route-pageNumber="@(Model.MetaData.CurrentPage+1)"
             class="btn btn-sm btn-outline-primary">
                 Next<i class="arrow right"></i>
@@ -59,7 +66,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-        <form asp-action="Delete" method="post">
+        <form asp-action="Delete" asp-route-fridgeId="@Model.FridgeId" method="post">
             <input type="hidden" id="id" name="id"/>
             <button type="submit" class="btn btn-danger">
                 Yes

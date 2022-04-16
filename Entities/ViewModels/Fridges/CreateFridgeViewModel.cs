@@ -1,5 +1,4 @@
-﻿using Entities.ViewModels.FridgeModels;
-using System;
+﻿using System;
 
 namespace Entities.ViewModels.Fridges
 {

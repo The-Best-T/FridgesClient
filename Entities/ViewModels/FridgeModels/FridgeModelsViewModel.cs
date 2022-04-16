@@ -5,7 +5,7 @@ namespace Entities.ViewModels.FridgeModels
 {
     public class FridgeModelsViewModel
     {
-        public IEnumerable<FridgeModelViewModel> fridgeModels { get; set; }
-        public MetaData metaData { get; set; }
+        public IEnumerable<FridgeModelViewModel> FridgeModels { get; set; }
+        public MetaData MetaData { get; set; }
     }
 }

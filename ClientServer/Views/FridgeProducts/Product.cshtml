@@ -1,0 +1,30 @@
+﻿@using Entities.ViewModels.FridgeProducts
+@model FridgeProductViewModel
+ @{
+    ViewData["Title"] = "Product from the fridge";
+ }
+ <h1>Product from the fridge</h1>
+<a asp-action="Products" asp-route-fridgeId="@Model.FridgeId" style="margin-right:100%" 
+     class="btn btn-primary">
+     Products  
+</a>
+<div style="color:#007bff">
+    <h3>
+        <span style="color:black">
+            Product name:
+        </span> 
+            @Model.ProductName
+    </h3>
+    <h3>
+        <span style="color:black">
+            Quantity:
+        </span> 
+            @Model.Quantity
+    </h3>
+</div>
+<div style="margin-top:15px">
+    <a asp-action="Update" asp-route-fridgeId="@Model.FridgeId" asp-route-id="@Model.ProductId" 
+         class="btn btn-sm btn-primary">
+         Change  
+    </a>
+</div>
