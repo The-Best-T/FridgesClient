@@ -5,7 +5,7 @@ namespace Entities.ViewModels.Products
 {
     public class ProductsViewModel
     {
-        public IEnumerable<ProductViewModel> products { get; set; }
+        public IEnumerable<ProductViewModel> Products { get; set; }
         public MetaData MetaData { get; set; }
     }
 }

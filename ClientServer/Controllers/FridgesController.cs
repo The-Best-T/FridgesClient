@@ -44,7 +44,7 @@ namespace ClientServer.Controllers
                         var fridges = _mapper.Map<IEnumerable<Fridge>>(fridgesResponse);
                         var fridgesViewModel = new FridgesViewModel()
                         {
-                            fridges = _mapper.Map<IEnumerable<FridgeViewModel>>(fridges),
+                            Fridges = _mapper.Map<IEnumerable<FridgeViewModel>>(fridges),
                             MetaData = JsonConvert.DeserializeObject<MetaData>(jsonResponse.Headres["X-Pagination"])
                         };
                         return View(fridgesViewModel);
@@ -98,7 +98,7 @@ namespace ClientServer.Controllers
                         var fridgeModels = _mapper.Map<IEnumerable<FridgeModel>>(fridgeModelsResponse);
                         var fridgeModelsViewModel = new FridgeModelsViewModel()
                         {
-                            fridgeModels = _mapper.Map<IEnumerable<FridgeModelViewModel>>(fridgeModels),
+                            FridgeModels = _mapper.Map<IEnumerable<FridgeModelViewModel>>(fridgeModels),
                             MetaData = JsonConvert.DeserializeObject<MetaData>(jsonResponse.Headres["X-Pagination"])
                         };
                         return View(fridgeModelsViewModel);

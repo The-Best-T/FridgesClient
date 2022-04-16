@@ -44,7 +44,7 @@ namespace ClientServer.Controllers
                         var products = _mapper.Map<IEnumerable<Product>>(productsResponse);
                         var productsViewModel = new ProductsViewModel()
                         {
-                            products = _mapper.Map<IEnumerable<ProductViewModel>>(products),
+                            Products = _mapper.Map<IEnumerable<ProductViewModel>>(products),
                             MetaData = JsonConvert.DeserializeObject<MetaData>(jsonResponse.Headres["X-Pagination"])
                         };
                         return View(productsViewModel);

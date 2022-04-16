@@ -43,7 +43,7 @@ namespace ClientServer.Controllers
                         var fridgeModels = _mapper.Map<IEnumerable<FridgeModel>>(fridgeModelsResponse);
                         var fridgeModelsViewModel = new FridgeModelsViewModel()
                         {
-                            fridgeModels = _mapper.Map<IEnumerable<FridgeModelViewModel>>(fridgeModels),
+                            FridgeModels = _mapper.Map<IEnumerable<FridgeModelViewModel>>(fridgeModels),
                             MetaData = JsonConvert.DeserializeObject<MetaData>(jsonResponse.Headres["X-Pagination"])
                         };
                         return View(fridgeModelsViewModel);

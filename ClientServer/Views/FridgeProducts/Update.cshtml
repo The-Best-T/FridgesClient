@@ -1,0 +1,23 @@
+﻿@using Entities.ViewModels.FridgeProducts
+@model UpdateFridgeProductViewModel
+ @{
+    ViewData["Title"] = "Update product from the fridge";
+ }
+ <h1>Update product</h1>
+<a asp-action="Product" asp-route-fridgeId="@Model.FridgeId" asp-route-id="@Model.ProductId" style="margin-right:100%" 
+     class="btn btn-primary">
+     Back  
+</a>
+<form method="post" asp-controller="FridgeProducts" asp-action="Update" asp-route-fridgeId="@Model.FridgeId">
+    <div asp-validation-summary="ModelOnly" id="myCustomSummary" class="text-danger" style="margin:auto"></div>
+    <div class="form-group">
+        <label asp-for="Quantity">Quantity</label><br />
+        <input asp-for="Quantity" value="@Model.Quantity"
+         style='width:300px;margin:auto' class="form-control"/>
+        <span asp-validation-for="Quantity" class="text-danger"></span>
+    </div>
+    <input type="hidden" name="ProductId" value="@Model.ProductId"/>
+    <div style="margin-top:15px">
+        <button type="submit" class="btn btn-success">Update</button>
+    </div>
+</form>
