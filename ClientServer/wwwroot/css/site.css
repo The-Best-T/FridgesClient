@@ -99,3 +99,6 @@ i {
     transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
 }
+#menu ul li{
+    margin-bottom:20px;
+}

@@ -277,6 +277,7 @@ namespace ClientServer.Controllers
         {
             if (ModelState.IsValid)
             {
+                _logger.LogInfo(model.Quantity.ToString());
                 string token = HttpContext.Request.Cookies["JWT"];
 
                 model.ProductId = productId;
